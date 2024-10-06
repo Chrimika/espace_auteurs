@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f5f5f5; }
+        .side-nav { width: 240px; background-color: #f5f5f5; transition: width 0.5s ease-in-out; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); position: fixed; height: 100vh; }
+        .side-nav.collapsed { width: 80px; }
+        .side-nav ul { padding: 0; margin: 0; list-style: none; }
+        .side-nav li { position: relative; }
+        .side-nav a { display: flex; align-items: center; padding: 15px 20px; color: #333; text-decoration: none; transition: background-color 0.3s ease; }
+        .side-nav a:hover { background-color: #e0e0e0; }
+        .side-nav .menu-icon { margin-right: 20px; transition: margin-right 0.5s ease-in-out; }
+        .side-nav.collapsed .menu-icon { margin-right: 0; text-align: center; }
+        .side-nav .menu-text { font-size: 16px; transition: opacity 0.5s ease-in-out; }
+        .side-nav.collapsed .menu-text { opacity: 0; }
+        .side-nav li:not(:last-child)::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background-color: #ccc; }
+        .content { margin-left: 240px; padding: 20px; transition: margin-left 0.5s ease-in-out; }
+        .side-nav.collapsed + .content { margin-left: 80px; }
+
+        /* Styles pour le profil */
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            position: relative;
+            
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .upload-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .input-field {
+            text-align: left;
+        }
+        .right0{
+            display: flex;
+            width: 100%;
+            justify-content: flex-end;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="side-nav">
+        <ul>
+            <li><a href="#" id="toggle-sidebar"><i class="material-icons menu-icon">menu</i><span class="menu-text">Menu</span></a></li>
+            <li><a href="statistiques.html"><i class="material-icons menu-icon">insights</i><span class="menu-text">Statistiques</span></a></li>
+            <li><a href="livres.html"><i class="material-icons menu-icon">book</i><span class="menu-text">Livres</span></a></li>
+            <li><a href="profile.html"><i class="material-icons menu-icon">person</i><span class="menu-text">Profile</span></a></li>
+            <li><a href="contact.html"><i class="material-icons menu-icon">contact_mail</i><span class="menu-text">Contactez Nous</span></a></li>
+            <li><a href="ventes.html"><i class="material-icons menu-icon">shopping_cart</i><span class="menu-text">Ventes</span></a></li>
+            <li><a href="paiements.html"><i class="material-icons menu-icon">payments</i><span class="menu-text">Paiements</span></a></li>
+
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <div class="profile-container">
+            <div class="right0">
+                <a href="../index.html" style="align-items: center; display: flex; color: red;text-align: center;"><i class="material-icons">logout</i>Logout</a> 
+            </div>
+            <div style="display: flex; justify-content: center;">
+                <div class="profile-picture">
+                    <img src="../images/mika.jpg" alt="Photo de profil" id="profile-photo">
+                    <i class="material-icons upload-icon" id="upload-photo">photo_camera</i>
+                    <input type="file" id="photo-input" style="display: none;">
+                </div>
+            </div>
+            
+            <div class="input-field">
+                <input id="NomPrenom" type="text" class="validate">
+                <label for="NomPrenom">Nom et Prénom</label>
+            </div>
+            <div class="input-field">
+                <input id="Metier" type="text" class="validate">
+                <label for="Metier">Métier</label>
+            </div>
+            <div class="input-field">
+                <input id="Nationalite" type="text" class="validate">
+                <label for="Nationalite">Nationalité</label>
+            </div>
+            <div class="input-field">
+                <input id="Adresse" type="text" class="validate">
+                <label for="Adresse">Adresse</label>
+            </div>
+            <div class="input-field">
+                <input id="Tel" type="text" class="validate">
+                <label for="Tel">Téléphone</label>
+            </div>
+            <div class="input-field">
+                <textarea id="bio" class="materialize-textarea"></textarea>
+                <label for="bio">Biographie</label>
+            </div>
+            <a class="waves-effect waves-light btn" id="save-profile">Sauvegarder</a>
+        </div>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-storage-compat.js"></script>
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Récupérer le nom et prénom de l'auteur
+        const authorNomPrenom = localStorage.getItem('auteur');
+        
+
+        if (authorNomPrenom) {
+    console.log(authorNomPrenom);
+    db.collection('auteurs')
+        .where('email', '==', authorNomPrenom)
+        .get()
+        .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0];
+                const authorData = doc.data();
+                document.getElementById('NomPrenom').value = authorData.NomPrenom;
+                document.getElementById('Metier').value = authorData.Metier;
+                document.getElementById('Nationalite').value = authorData.Nationalite;
+                document.getElementById('Adresse').value = authorData.Adresse;
+                document.getElementById('Tel').value = authorData.Tel;
+                document.getElementById('bio').value = authorData.bio;
+                if (authorData.photo) {
+                    document.getElementById('profile-photo').src = authorData.photo;
+                }
+                M.updateTextFields();
+
+                // Mettre à jour l'ID du document pour les futures opérations
+                authorDocumentId = doc.id;
+            } else {
+                console.log("Aucun auteur trouvé avec ce nom et prénom.");
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la récupération des données de l'auteur: ", error);
+        });
+}
+
+
+        // Sauvegarder les modifications du profil
+        document.getElementById('save-profile').addEventListener('click', function() {
+            const updatedData = {
+                NomPrenom: document.getElementById('NomPrenom').value,
+                Metier: document.getElementById('Metier').value,
+                Nationalite: document.getElementById('Nationalite').value,
+                Adresse: document.getElementById('Adresse').value,
+                Tel: document.getElementById('Tel').value,
+                bio: document.getElementById('bio').value
+            };
+
+            if (authorNomPrenom) {
+                updateAuthorData(authorNomPrenom, updatedData);
+            }
+        });
+
+        // Fonction pour mettre à jour les données de l'auteur
+        function updateAuthorData(authorNomPrenom, data) {
+    db.collection('auteurs')
+        .where('email', '==', authorNomPrenom)
+        .get()
+        .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                const doc = querySnapshot.docs[0]; // Récupérer le premier document correspondant
+                const authorRef = db.collection('auteurs').doc(doc.id);
+
+                // Mettre à jour les données de l'auteur
+                authorRef.update(data)
+                    .then(() => {
+                        M.toast({ html: 'Données mises à jour avec succès!' });
+                    })
+                    .catch((error) => {
+                        console.error("Erreur lors de la mise à jour des données: ", error);
+                    });
+            } else {
+                console.log("Aucun auteur trouvé avec ce nom et prénom.");
+            }
+        })
+        .catch((error) => {
+            console.error("Erreur lors de la recherche de l'auteur: ", error);
+        });
+}
+
+
+        // Gestion de l'upload de la photo
+        document.getElementById('upload-photo').addEventListener('click', function() {
+            document.getElementById('photo-input').click();
+        });
+
+        document.getElementById('photo-input').addEventListener('change', function(event) {
+            const file = event.target.files[0];
+            const storageRef = storage.ref(`auteurs/${authorNomPrenom}`);
+
+            storageRef.put(file).then(() => {
+                return storageRef.getDownloadURL();
+            }).then(url => {
+                document.getElementById('profile-photo').src = url;
+                updateAuthorData(authorNomPrenom, { photo: url });
+            }).catch(error => {
+                console.error("Erreur lors de l'upload de la photo: ", error);
+            });
+        });
+
+        // Gestion du toggle de la sidebar
+        document.getElementById('toggle-sidebar').addEventListener('click', function() {
+            document.querySelector('.side-nav').classList.toggle('collapsed');
+            document.querySelector('.content').classList.toggle('collapsed');
+        });
+    </script>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

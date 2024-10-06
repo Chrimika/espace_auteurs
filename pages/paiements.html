@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile</title>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body { background-color: #f5f5f5; }
+        .side-nav { width: 240px; background-color: #f5f5f5; transition: width 0.5s ease-in-out; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); position: fixed; height: 100vh; }
+        .side-nav.collapsed { width: 80px; }
+        .side-nav ul { padding: 0; margin: 0; list-style: none; }
+        .side-nav li { position: relative; }
+        .side-nav a { display: flex; align-items: center; padding: 15px 20px; color: #333; text-decoration: none; transition: background-color 0.3s ease; }
+        .side-nav a:hover { background-color: #e0e0e0; }
+        .side-nav .menu-icon { margin-right: 20px; transition: margin-right 0.5s ease-in-out; }
+        .side-nav.collapsed .menu-icon { margin-right: 0; text-align: center; }
+        .side-nav .menu-text { font-size: 16px; transition: opacity 0.5s ease-in-out; }
+        .side-nav.collapsed .menu-text { opacity: 0; }
+        .side-nav li:not(:last-child)::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background-color: #ccc; }
+        .content { margin-left: 240px; padding: 20px; transition: margin-left 0.5s ease-in-out; }
+        .side-nav.collapsed + .content { margin-left: 80px; }
+
+        /* Styles pour le profil */
+        .profile-container {
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+            position: relative;
+            
+        }
+        .profile-picture img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+        }
+        .upload-icon {
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            background-color: white;
+            border-radius: 50%;
+            padding: 5px;
+            cursor: pointer;
+        }
+        .input-field {
+            text-align: left;
+        }
+        .right0{
+            display: flex;
+            width: 100%;
+            justify-content: flex-end;
+        }
+        .progress { background-color: #e0e0e0; }
+        .determinate { background-color: #3b5998; }
+        /* Styles pour les transactions */
+        .transaction { display: flex; justify-content: space-between; padding: 10px; border-bottom: 1px solid #ddd; }
+        .transaction.hidden { display: none; }
+        .expandable { transition: max-height 0.5s ease-in-out; overflow: hidden; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="side-nav">
+        <ul>
+            <li><a href="#" id="toggle-sidebar"><i class="material-icons menu-icon">menu</i><span class="menu-text">Menu</span></a></li>
+            <li><a href="statistiques.html"><i class="material-icons menu-icon">insights</i><span class="menu-text">Statistiques</span></a></li>
+            <li><a href="livres.html"><i class="material-icons menu-icon">book</i><span class="menu-text">Livres</span></a></li>
+            <li><a href="profile.html"><i class="material-icons menu-icon">person</i><span class="menu-text">Profile</span></a></li>
+            <li><a href="contact.html"><i class="material-icons menu-icon">contact_mail</i><span class="menu-text">Contactez Nous</span></a></li>
+            <li><a href="ventes.html"><i class="material-icons menu-icon">shopping_cart</i><span class="menu-text">Ventes</span></a></li>
+            <li><a href="paiements.html"><i class="material-icons menu-icon">payments</i><span class="menu-text">Paiements</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h5>Paiements</h5>
+
+        <div style="background-color: #fff; width: 90%; padding: 16px; display: flex;border: 0.1px solid lightgray;">
+            <div style="display: flex; justify-content: space-between;padding: 16px;width: 100%;">
+                <div style="width: 75%;">
+                    <p style="font-size: x-large;">Vos revenus</p>
+                    <p style="font-size: small;">Paiement possible si le montant a atteint votre seuil de <span id="seuilPaiement">20000</span> XAF</p>
+                    <div class="progress" style="width: 100%;">
+                        <div class="determinate" id="progressBar"></div>
+                    </div>
+                    <div style="display: flex; justify-content: space-between;">
+                        <p style="font-size: small;" id="percentPaiement">Vous avez atteint 0% de votre seuil de paiement</p>
+                        <p style="font-size: small;">Seuil de paiement: <span id="seuilPaiementFooter">20000</span> XAF</p>
+                    </div>
+                </div>
+                <div>
+                    <p id="soldeAuteur" style="font-size: xx-large; justify-content: space-between;">0 XAF</p>
+                    <button id="retirer" style="background-color: #4CAF50; /* Vert */
+                    border: none;
+                    color: white;
+                    padding: 10px 20px;
+                    text-align: center;
+                    text-decoration: none;
+                    display: inline-block;
+                    font-size: 16px;
+                    margin: 10px 0;
+                    cursor: pointer;
+                    border-radius: 5px;" onclick="openModal()">Retirer</button>
+                </div>
+            </div>
+        </div>
+
+        <div style="background-color: #fff; width: 90%; display: flex; margin-top: 16px; border: 0.1px solid lightgray;">
+            <div style="width: 100%;">
+                <p style="font-size: x-large; margin: 16px;">Transactions</p>
+                <div id="transactionsContainer"></div>
+                <div style="width: 100%; border-top: 0.1px solid lightgray; display: flex; align-items: center; justify-content: center; padding: 16px;">
+                    <p id="showMore">Afficher les transactions</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modale pour la demande de retrait -->
+<div id="withdrawModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Combien souhaitez-vous retirer ?</h2>
+      <input type="number" id="withdrawAmount" placeholder="Saisir le montant à retirer">
+      <button onclick="submitWithdrawal()">Soumettre la demande</button>
+    </div>
+  </div>
+  
+  <style>
+    .modal {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .modal-content {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 10px;
+      text-align: center;
+    }
+  </style>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-storage-compat.js"></script>
+    <script>
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Récupérer l'ID de l'auteur depuis le localStorage
+        const auteurId = localStorage.getItem('id');
+
+        // Fonction pour dynamiser le solde, le seuil et la barre de progression
+        async function updatePaiementDetails() {
+            try {
+                // Récupérer le solde de l'auteur
+                const auteurDocRef = db.collection('auteurs').doc(auteurId);
+                const auteurDoc = await auteurDocRef.get();
+
+                if (auteurDoc.exists) {
+                    const solde = parseFloat(auteurDoc.data().solde) || 0;
+                    document.getElementById('soldeAuteur').textContent = solde.toLocaleString() + ' XAF';
+                    
+                    // Récupérer le seuil de paiement
+                    const globalDocRef = db.collection('global').doc('settings');
+                    const globalDoc = await globalDocRef.get();
+
+                    if (globalDoc.exists) {
+                        const seuil = parseFloat(globalDoc.data().seuilAuteur) || 20000;
+                        document.getElementById('seuilPaiement').textContent = seuil.toLocaleString();
+                        document.getElementById('seuilPaiementFooter').textContent = seuil.toLocaleString() + ' XAF';
+                        
+                        // Calculer le pourcentage
+                        const pourcentage = Math.min((solde / seuil) * 100, 100);
+                        document.getElementById('percentPaiement').textContent = `Vous avez atteint ${pourcentage.toFixed(2)}% de votre seuil de paiement`;
+                        
+                        // Mettre à jour la barre de progression
+                        document.getElementById('progressBar').style.width = pourcentage + '%';
+                    }
+                } else {
+                    console.error('Document de l\'auteur non trouvé.');
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des données de paiement:', error);
+            }
+        }
+
+        // Appel de la fonction au chargement de la page
+        window.onload = updatePaiementDetails;
+
+        async function loadAuthorData() {
+            const authorId = localStorage.getItem('id');
+            const authorDoc = await db.collection('auteurs').doc(authorId).get();
+            const globalDataDoc = await db.collection('global').doc('globalData').get();
+
+            if (authorDoc.exists && globalDataDoc.exists) {
+                const authorData = authorDoc.data();
+                const globalData = globalDataDoc.data();
+                const authorRevenue = authorData.solde || 0;
+                const paymentThreshold = globalData.seuilDePaiement || 20000;
+
+                document.getElementById('authorRevenue').textContent = `${authorRevenue.toLocaleString()} XAF`;
+                document.getElementById('paymentThreshold').textContent = `${paymentThreshold.toLocaleString()} XAF`;
+
+                const percentage = (authorRevenue / paymentThreshold) * 100;
+                document.getElementById('percentReached').textContent = `Vous avez atteint ${percentage.toFixed(2)}% de votre seuil de paiement`;
+                document.getElementById('progressBar').style.width = `${percentage}%`;
+            }
+        }
+
+        // Dynamiser les transactions
+        async function loadTransactions() {
+            const authorId = localStorage.getItem('id');
+            const authorDoc = await db.collection('auteurs').doc(authorId).get();
+            if (authorDoc.exists) {
+                const transactions = authorDoc.data().transactions || [];
+                const sortedTransactions = transactions.sort((a, b) => b.date - a.date); // Trier par date décroissante
+                displayTransactions(sortedTransactions.slice(0, 5), false); // Afficher les 5 premières
+                setupShowMoreButton(sortedTransactions);
+            }
+        }
+
+        function displayTransactions(transactions, showAll) {
+            const transactionsContainer = document.getElementById('transactionsContainer');
+            transactionsContainer.innerHTML = ''; // Réinitialiser le contenu
+            transactions.forEach((transaction, index) => {
+                const transactionDiv = document.createElement('div');
+                transactionDiv.classList.add('transaction');
+                if (!showAll && index >= 5) transactionDiv.classList.add('hidden'); // Masquer les transactions supplémentaires
+
+                const date = new Date(transaction.date.seconds * 1000).toLocaleString(); // Formater la date
+                transactionDiv.innerHTML = `
+                    <span>${transaction.type}</span>
+                    <span>${transaction.amount.toLocaleString()} XAF</span>
+                    <span>${transaction.balance.toLocaleString()} XAF</span>
+                    <span>${date}</span>
+                `;
+                transactionsContainer.appendChild(transactionDiv);
+            });
+        }
+
+        function setupShowMoreButton(transactions) {
+            const showMoreButton = document.getElementById('showMore');
+            showMoreButton.addEventListener('click', () => {
+                const hiddenTransactions = document.querySelectorAll('.transaction.hidden');
+                hiddenTransactions.forEach(transaction => {
+                    transaction.classList.remove('hidden');
+                });
+                document.getElementById('transactionsContainer').classList.add('expandable');
+                showMoreButton.style.display = 'none'; // Masquer le bouton après affichage des transactions
+            });
+        }
+        // Fonction pour ouvrir la modale
+        function openModal() {
+        document.getElementById('withdrawModal').style.display = 'block';
+        }
+
+        // Fonction pour fermer la modale
+        function closeModal() {
+        document.getElementById('withdrawModal').style.display = 'none';
+        }
+
+        // Fonction pour vérifier et afficher le bouton "Retirer"
+        async function updatePaiementDetails() {
+        try {
+            const auteurDocRef = db.collection('auteurs').doc(auteurId);
+            const auteurDoc = await auteurDocRef.get();
+
+            if (auteurDoc.exists) {
+            const solde = parseFloat(auteurDoc.data().solde) || 0;
+            document.getElementById('soldeAuteur').textContent = solde.toLocaleString() + ' XAF';
+
+            const globalDocRef = db.collection('global').doc('settings');
+            const globalDoc = await globalDocRef.get();
+
+            if (globalDoc.exists) {
+                const seuil = parseFloat(globalDoc.data().seuilAuteur) || 20000;
+                document.getElementById('seuilPaiement').textContent = seuil.toLocaleString() + ' XAF';
+
+                const pourcentage = Math.min((solde / seuil) * 100, 100);
+                document.getElementById('percentPaiement').textContent = `Vous avez atteint ${pourcentage.toFixed(2)}% de votre seuil de paiement`;
+                document.getElementById('progressBar').style.width = pourcentage + '%';
+
+                // Si le seuil est atteint ou dépassé, afficher le bouton "Retirer"
+                if (solde >= seuil) {
+                document.getElementById('retirer').style.display = 'inline-block';
+                }
+            }
+            }
+        } catch (error) {
+            console.error('Erreur lors de la récupération des données de paiement:', error);
+        }
+        }
+
+        async function submitWithdrawal() {
+            const withdrawAmount = parseFloat(document.getElementById('withdrawAmount').value);
+            const auteurDocRef = db.collection('auteurs').doc(auteurId);
+            const auteurDoc = await auteurDocRef.get();
+
+            if (auteurDoc.exists) {
+                const solde = parseFloat(auteurDoc.data().solde) || 0;
+                const globalDocRef = db.collection('global').doc('settings');
+                const globalDoc = await globalDocRef.get();
+
+                if (globalDoc.exists) {
+                const seuil = parseFloat(globalDoc.data().seuilAuteur) || 20000;
+
+                // Validation du montant retiré
+                if (withdrawAmount < seuil) {
+                    alert('Vous ne pouvez pas retirer moins que le seuil de paiement.');
+                    return;
+                }
+
+                if (withdrawAmount > solde) {
+                    alert('Vous ne pouvez pas retirer plus que votre solde disponible.');
+                    return;
+                }
+
+                // Calcul du solde restant
+                const remainingBalance = solde - withdrawAmount;
+
+                try {
+                    // Créer une nouvelle transaction de retrait dans la collection "Retraits"
+                    const retraitRef = await db.collection('Retraits').add({
+                    auteurId: auteurId,
+                    montant: withdrawAmount,
+                    date: firebase.firestore.Timestamp.now(),
+                    etat: 'en cours' // Le statut initial sera "en cours"
+                    });
+
+                    // Décrémenter le solde de l'auteur dans la collection "auteurs"
+                    await auteurDocRef.update({
+                    solde: remainingBalance,
+                    transactions: firebase.firestore.FieldValue.arrayUnion({
+                        amount: withdrawAmount,
+                        balance: remainingBalance,
+                        date: firebase.firestore.Timestamp.now(),
+                        type: 'retrait'
+                    })
+                    });
+
+                    alert('Votre demande de retrait a été soumise avec succès.');
+                    closeModal();
+                    updatePaiementDetails();  // Rafraîchir les détails du paiement
+
+                } catch (error) {
+                    console.error('Erreur lors de la soumission de la demande de retrait:', error);
+                    alert('Une erreur est survenue lors de la soumission de la demande de retrait.');
+                }
+                }
+            }
+        }
+
+
+
+        // Charger les données au chargement de la page
+        document.addEventListener('DOMContentLoaded', () => {
+            loadAuthorData();
+            loadTransactions();
+        });
+
+        // Gérer la sidebar
+        document.getElementById('toggle-sidebar').addEventListener('click', function () {
+            const sideNav = document.querySelector('.side-nav');
+            const content = document.querySelector('.content');
+            sideNav.classList.toggle('collapsed');
+            content.classList.toggle('expanded');
+        });
+
+        // Gérer le toggle de la sidebar
+        document.getElementById('toggle-sidebar').addEventListener('click', function (e) {
+            e.preventDefault();
+            document.querySelector('.side-nav').classList.toggle('collapsed');
+            document.querySelector('.content').classList.toggle('collapsed');
+        });
+    </script>
+
+    <!-- Materialize JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

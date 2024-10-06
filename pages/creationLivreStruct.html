@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails</title>
+
+    <!-- Inclure Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5; 
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto; /* Activer le défilement vertical */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Roboto', sans-serif; /* Materialize utilise la police Roboto */
+        }
+        .head-block{
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 70%;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .head-sub{
+            width: 35%;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            justify-content: center;
+            font-weight: bold;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 120px;
+            font-size: 11px;
+            cursor: pointer; /* Changer le curseur pour indiquer que c'est cliquable */
+        }
+        .head-sub p {
+            margin: 0;
+        }
+        .body-block{
+            padding: 16px;
+            display: flex;
+            width: 67.5%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin-bottom: 16px; /* Ajout d'une marge pour séparer les blocs */
+            box-sizing: border-box;
+        }
+        .body-block p {
+            margin: 0 0 8px 0;
+        }
+        .body-block input {
+            width: 100%;
+            margin-bottom: 16px;
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        .description textarea {
+            height: 150px;
+            resize: none;
+        }
+        .modal {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 15%;
+            /* width: 100%;
+            height: 100%; */
+            overflow: auto;
+        }
+
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    /*width: 90%;*/
+    /*max-width: 500px;*/
+    /*box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);*/
+    position: relative;
+}
+
+.close-modal {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.input-field {
+    margin-bottom: 20px;
+}
+
+.image-preview, .pdf-preview {
+    margin-top: 10px;
+}
+
+#preview-img, #preview-pdf {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+}
+
+.series-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+}
+
+.series-content {
+    display: flex;
+    align-items: center;
+    width: 100%;
+}
+
+.series-image {
+    width: 80px; /* Ajustez la taille de l'image selon vos besoins */
+    height: auto;
+    margin-right: 15px;
+}
+
+.series-details {
+    flex: 1;
+    margin-right: 16px;
+}
+
+.series-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+}
+
+.btn{
+    background-color: rgb(247, 196, 27);
+    color: black;
+    display: block;
+    margin: 16px auto;
+    width: auto;
+}
+.small-btn {
+  width: auto; /* Autorise le bouton à s'ajuster à la largeur du texte */
+  min-width: 60px; /* Taille minimale pour ne pas être trop petit */
+  height: 30px; /* Hauteur fixe */
+  font-size: 10px; /* Taille du texte plus petite */
+  padding: auto 5px; /* Moins de padding pour rendre le bouton plus compact */
+  text-align: center; /* Centre le texte à l'intérieur du bouton */
+  white-space: nowrap; /* Empêche le texte de se diviser en plusieurs lignes */
+  overflow: hidden; /* Coupe tout débordement éventuel */
+  box-sizing: border-box; /* Inclus le padding dans la largeur totale */
+}
+
+
+
+    </style>
+</head>
+<body>
+    <div class="head-block">
+        <div id="block1" class="head-sub" style="border-bottom: 3px solid red;">
+            <p style="font-size: 14px;" >Informations relatives à l'ebook papers</p>
+            <p style="margin-top: 16px; color: green;"><img src="../images/checked.png" alt="" width="16px" height="16px"> finalisé</p>
+        </div>
+        <div id="block2" class="head-sub" style="margin: 0 16px">
+            <p style="font-size: 14px;color: rgb(44, 44, 151);">Contenu de l'ebook papers</p>
+            <p style="margin-top: 16px; color: green;"><img src="../images/checked.png" alt="" width="16px" height="16px"> finalisé</p>
+        </div>
+        <div id="block3" class="head-sub">
+            <p style="font-size: 14px;color: rgb(44, 44, 151);">Prix de l'ebook papers</p>
+            <p style="margin-top: 16px; color: green;"><img src="../images/checked.png" alt="" width="16px" height="16px"> finalisé</p>
+        </div>
+    </div>
+
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);" >Titre du livre</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px">Indiquez le titre tel qu'il figure sur la couverture de votre livre. Si vous ajoutez un sous-titre, deux points seront insérés entre le titre et le sous-titre. Avant de continuer, vérifiez votre saisie (absence de coquilles, etc.) car ce champ ne peut pas être mis à jour après publication. <span style="color: rgb(44, 44, 151);font-size: 11px;">Lignes directrices relatives au titre du livre</span></p>
+            <p style="font-weight: bold;font-size: 14px">Titre du livre</p>
+            <input type="text" id="bookTitle">
+            <p style="font-weight: bold;font-size: 14px">Sous-titre</p>
+            <input type="text" id="bookSubtitle">
+        </div>
+    </div>
+
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);" >Type</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px">Choisissez un type.</p>
+            <div class="input-field" style="display: flex;">
+                <p>
+                    <label>
+                        <input name="type" type="radio" value="true" />
+                        <span>Oui, c'est une série</span>
+                    </label>
+                </p>
+                <p style="margin-left: 16px;">
+                    <label>
+                        <input name="type" type="radio" value="false" />
+                        <span>Non, ce n'est pas une série</span>
+                    </label>
+                </p>
+            </div>
+        </div>
+    </div>
+
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);" >Rubriques</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px">Choisissez une rubrique pour décrire votre livre.</p>
+            <select id="genre" class="browser-default">
+                <option value="" disabled selected>Choisir rubrique</option>
+                <option value="Arts & Photography">Arts & Photography</option>
+                <option value="Buisiness & Money">Buisiness & Money</option>
+                <option value="Comics, Manga & Graphic Novels">Comics, Manga & Graphic Novels</option>
+                <option value="Cookbooks, Food & Wine">Cookbooks, Food & Wine</option>
+                <option value="Education & Teaching">Education & Teaching</option>
+                <option value="Foreign Languages">Foreign Languages</option>
+                <option value="History">History</option>
+                <option value="Law">Law</option>
+                <option value="Literature & Fiction">Literature & Fiction</option>
+                <option value="Mystery, Thriller & Suspense">Mystery, Thriller & Suspense</option>
+                <option value="Parenting & Relationships">Parenting & Relationships</option>
+                <option value="Reference">Reference</option>
+                <option value="Romance">Romance</option>
+                <option value="Science Fiction & Fantasy">Science Fiction & Fantasy</option>
+                <option value="Sports & Outdoors">Sports & Outdoors</option>
+                <option value="Travel">Travel</option>
+                <option value="Biographies & Memories">Biographies & Memories</option>
+                <option value="Childrens eBooks">Childrens eBooks</option>
+                <option value="Computers & Technology">Computers & Technology</option>
+                <option value="Crafts, Hobbies & Home">Crafts, Hobbies & Home</option>
+                <option value="Engineering & Transportation">Engineering & Transportation</option>
+                <option value="Health, Fitness & Dieting">Health, Fitness & Dieting</option>
+                <option value="Humor & Entertainment">Humor & Entertainment</option>
+                <option value="Medical ebooks">Medical ebooks</option>
+                <option value="Nonfiction">Nonfiction</option>
+                <option value="Politics & Social Sciences">Politics & Social Sciences</option>
+                <option value="Religion & Spirituality">Religion & Spirituality</option>
+                <option value="Science & Math">Science & Math</option>
+                <option value="Self-Help">Self-Help</option>
+                <option value="Teen & Young Adult">Teen & Young Adult</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);" >Caractéristiques</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px">Choisissez un type.</p>
+            <div class="input-field" style="display: flex;">
+                <div class="input-field">
+                    <p>Format:</p>
+                    <select id="format" class="browser-default">
+                        <option value="" disabled selected>Choisir le format</option>
+                        <option value="A4">A4</option>
+                        <option value="A5">A5</option>
+                        <option value="Letter">Letter</option>
+                        <option value="Legal">Legal</option>
+                        <!-- Ajoutez les autres formats ici -->
+                    </select>
+                </div>
+                <div class="input-field" style="margin-left: 16px;">
+                    <input id="annee" type="number" class="validate">
+                    <label for="annee">Année</label>
+                </div>
+                <div class="input-field" style="margin-left: 16px;">
+                    <input id="NbPage" type="number" class="validate">
+                    <label for="NbPage">Nombre de pages</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);" >Description</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px">Résumez votre livre. Cette description sera celle de votre produit sur Papers et permettra aux clients d'en savoir plus sur votre livre. <span style="color: rgb(44, 44, 151);font-size: 11px;">Mettez en forme votre description.</span></p>
+            <div class="description">
+                <label for="description">Description</label>
+                <textarea id="description" maxlength="500" style="padding: 16px;font-size: 11px;"></textarea>
+                <div class="char-counter">500 caractères restants</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="section2" style="display:flex;justify-content:flex-end;width: 67.5%;align-items: right;cursor: pointer;">
+        <p style=" padding:4px;border-radius:4px;font-size: 11px;background-color: rgb(247, 196, 27);width: 150px;text-align: center;" class="gestion">Enregistrer et continuer</p>
+    </div>
+
+    <!-- Inclure Materialize JavaScript (optionnel, si vous avez des composants interactifs) -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+
+    <!-- Votre JavaScript -->
+    <script>
+
+        document.getElementById("block2").addEventListener("click", function() {
+            window.location.href = "creationLivreStruct2.html";
+        });
+        document.getElementById("block3").addEventListener("click", function() {
+            window.location.href = "creationLivreStruct3.html";
+        });
+    </script>
+
+<script>
+    document.getElementById('section2').addEventListener('click', function() {
+        // Créer un nouvel objet 'bookDetails' à chaque clic
+        let bookDetails = {};
+
+        // Récupérer les valeurs des champs
+        const bookTitle = document.getElementById('bookTitle').value.trim();
+        const bookSubtitle = document.getElementById('bookSubtitle').value.trim();
+        const genre = document.getElementById('genre').value.trim();
+        const description = document.getElementById('description').value.trim();
+        const bookType = document.querySelector('input[name="type"]:checked'); // Récupérer le type du livre
+        const bookDate = document.getElementById('annee').value.trim(); // Récupérer la date
+        const nbr_pages = document.getElementById('NbPage').value.trim();
+        const bookFormat = document.getElementById('format').value; // Récupérer le format
+
+        // Vérifier si tous les champs sont remplis
+        if (!bookTitle || !bookSubtitle || !genre || !description || !bookType || !bookDate || !bookFormat || !nbr_pages) {
+            alert('Veuillez remplir tous les champs.');
+            return; // Sortir de la fonction si des champs sont vides
+        }
+
+        // Mettre à jour les attributs de 'bookDetails' avec les nouvelles valeurs
+        bookDetails.name = bookTitle;
+        bookDetails.small_summary = bookSubtitle;
+        bookDetails.genre = genre;
+        bookDetails.summary = description;
+        bookDetails.type = bookType.value; // Récupérer la valeur de l'option sélectionnée
+        bookDetails.date = bookDate;
+        bookDetails.format = bookFormat;
+        bookDetails.NbPage = nbr_pages;
+
+        // Sauvegarder l'objet 'bookDetails' mis à jour dans le LocalStorage
+        localStorage.setItem('bookDetails', JSON.stringify(bookDetails));
+
+        // Alerter l'utilisateur que les données ont été enregistrées
+        alert('Les nouvelles valeurs ont été enregistrées!');
+
+        // Rediriger vers la page creationLivreStruct2.html
+        window.location.href = 'creationLivreStruct2.html';
+    });
+</script>
+
+</body>
+</html>

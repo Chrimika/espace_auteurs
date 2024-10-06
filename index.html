@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f5f5f5;
+        }
+
+        .login-container {
+            background-color: #fff;
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            width: 100%;
+            max-width: 400px;
+            position: relative; /* Pour le loader */
+        }
+
+        .login-container img {
+            width: 100px;
+            height: 100px;
+            border-radius: 50%;
+            margin-bottom: 20px;
+        }
+
+        .login-container h5 {
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+
+        .login-container .input-field {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        .login-container button {
+            width: 100%;
+        }
+
+        .eye-icon {
+            cursor: pointer;
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+
+        /* Styles pour le loader */
+        .loader {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: none; /* Caché par défaut */
+        }
+
+        .loader .spinner {
+            border: 4px solid rgba(0,0,0,0.1);
+            border-radius: 50%;
+            border-top: 4px solid #007bff;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <img src="images/logo.png" alt="Logo">
+        <h5>Se connecter</h5>
+        <p><i style="color: brown;">Papers Authors</i></p>
+
+        <div class="input-field">
+            <input id="email" type="email" class="validate" placeholder="Email" required>
+        </div>
+
+        <div class="input-field" style="position: relative;">
+            <input id="password" type="password" class="validate" placeholder="Mot de passe" required>
+            <span class="material-icons eye-icon" id="toggle-password">
+                visibility_off
+            </span>
+        </div>
+        <button id="login-btn" class="btn waves-effect waves-light" type="button">
+            Se connecter
+        </button>
+
+        <!-- Loader -->
+        <div class="loader">
+            <div class="spinner"></div>
+        </div>
+
+        <div id="error-message" class="red-text" style="margin-top: 20px; display: none;"></div>
+    </div>
+
+    <!-- Firebase and App Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore.js";
+
+        // Import CryptoJS from CDN using a script tag
+        const script = document.createElement('script');
+        script.src = "https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js";
+        script.onload = () => {
+            // Configuration Firebase
+            const firebaseConfig = {
+                apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+                authDomain: "paper-d9ad5.firebaseapp.com",
+                projectId: "paper-d9ad5",
+                storageBucket: "paper-d9ad5.appspot.com",
+                messagingSenderId: "966837266031",
+                appId: "1:966837266031:web:cacecb421f912557210f9a",
+                measurementId: "G-6NYLXR467G"
+            };
+
+            // Initialisation Firebase
+            const app = initializeApp(firebaseConfig);
+            const db = getFirestore(app);
+
+            function hashPassword(password) {
+                return CryptoJS.SHA256(password).toString();
+            }
+
+            async function login() {
+                const email = document.getElementById('email').value.trim();
+                const password = document.getElementById('password').value.trim();
+                const hashedPassword = hashPassword(password);
+                const errorMessage = document.getElementById('error-message');
+                const loader = document.querySelector('.loader');
+
+                console.log(`Email: ${email}`);
+                console.log(`Hashed Password: ${hashedPassword}`);
+
+                try {
+                    loader.style.display = 'block'; // Afficher le loader
+
+                    const q = query(
+                        collection(db, 'auteurs'),
+                        where('email', '==', email),
+                        where('password', '==', hashedPassword)
+                    );
+
+                    const querySnapshot = await getDocs(q);
+
+                    if (!querySnapshot.empty) {
+                        const authorDoc = querySnapshot.docs[0]; // On prend le premier document trouvé
+                        const authorData = authorDoc.data();
+                        
+                        // Stockage des informations dans le localStorage
+                        localStorage.setItem('auteur', authorData.email); // On stocke l'email au lieu du nom
+                        localStorage.setItem('password', password);
+                        localStorage.setItem('id', authorDoc.id); // Stocke l'ID du document
+
+                        // Redirection vers la page des statistiques
+                        window.location.href = 'pages/statistiques.html';
+                    } else {
+                        // Auteur non trouvé, afficher un message d'erreur
+                        errorMessage.textContent = 'Email ou mot de passe incorrect.';
+                        errorMessage.style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Erreur lors de la connexion:', error);
+                    errorMessage.textContent = 'Une erreur est survenue. Veuillez réessayer plus tard.';
+                    errorMessage.style.display = 'block';
+                } finally {
+                    loader.style.display = 'none'; // Cacher le loader
+                }
+            }
+
+            document.getElementById('toggle-password').addEventListener('click', function () {
+                const passwordInput = document.getElementById('password');
+                const toggleIcon = this;
+                
+                if (passwordInput.type === 'password') {
+                    passwordInput.type = 'text';
+                    toggleIcon.textContent = 'visibility'; // Icône pour l'œil ouvert
+                } else {
+                    passwordInput.type = 'password';
+                    toggleIcon.textContent = 'visibility_off'; // Icône pour l'œil barré
+                }
+            });
+
+            // Ajout d'un événement au bouton de connexion
+            document.getElementById('login-btn').addEventListener('click', login);
+        };
+        document.head.appendChild(script);
+    </script>
+</body>
+</html>

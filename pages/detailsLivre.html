@@ -1,0 +1,1134 @@
+<!-- Page de Détails du Livre (detailsLivre.html) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails du Livre</title>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #fff;
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            overflow: hidden;
+        }
+        .container {
+            display: flex;
+            width: 100%;
+            height: 100vh;
+            overflow: hidden;
+        }
+        .left-section, .right-section {
+            overflow-y: auto;
+            height: 100vh; 
+        }
+        .left-section {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            padding: 16px;
+            justify-content: start;
+        }
+        .right-section {
+            width: 100%;
+            padding-left: 20px;
+            flex: 0.4;
+            border-left:1px solid gray;
+        }
+        .cover-img {
+            width: 160px;
+            height: 200px;
+            border-radius: 8px;
+            object-fit: cover;
+            margin-bottom: 20px;
+            margin-left: 20px;
+        }
+        .edit-icon {
+            /* position: relative;
+            top: -40px;
+            left: 90%; */
+            cursor: pointer;
+            color: #0096D6;
+            margin-left: -12px;
+        }
+        .book-info {
+            font-size: 12px;
+            font-weight: 500;
+            margin-bottom: 20px;
+            flex: 1.3;
+        }
+        .form-container {
+            margin-top: 20px;
+        }
+        .form-group {
+            margin-bottom: 20px;
+        }
+        .file-input {
+            display: none;
+        }
+        .right0{
+            display: flex;
+            width: 100%;
+            margin-left: -200px;
+        }
+        .right1{
+            display: flex;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 20px;
+            padding: 16px;
+            border-bottom:0.3px solid gray;
+            padding-bottom: 32px;
+        }
+        .right2{
+            display: flex;
+            flex-wrap: wrap;
+            width: 80%;
+            padding-bottom: 32px;
+            border-bottom:0.3px solid gray;
+            margin-left: 90px;
+        }
+        .ventes-abonnement, .ventes{
+            margin-left: 90px;
+        }
+        .right21 , .right22{
+            display: flex;
+            width: 100%;
+           
+        }
+        .revues, .series{
+            display: flex;
+            justify-content: space-between;
+            margin-top: 16px;
+            flex-direction: column;
+            margin-left: 90px;
+        }
+        .revue-item{
+            display: flex;
+            flex-direction: row;
+            align-items: center;
+            border-bottom: 0.5px solid gray;
+            height: 60px;
+        }
+        /* Styles pour les épisodes */
+.episode-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    position: relative;
+    min-height: 60px;
+    padding: 8px;
+}
+
+.episode-left {
+    flex-shrink: 0;
+}
+
+.episode-img {
+    width: 42px;
+    height: 42px;
+    border-radius: 3px;
+    margin-right: 10px;
+}
+
+.episode-middle {
+    flex-grow: 1;
+}
+
+.episode-title {
+    font-weight: bold;
+    font-size: 14px;
+    margin-bottom: 5px;
+}
+
+.episode-description {
+    font-size: 12px;
+    color: #666;
+}
+
+.episode-right {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    justify-content: space-between;
+    height: 100%;
+    position: absolute;
+    right: 10px;
+}
+
+.episode-date {
+    font-size: 10px;
+    color: #999;
+}
+
+.episode-delete {
+    color: #f44336;
+    cursor: pointer;
+}
+.fixed-action-btn {
+            position: fixed;
+            bottom: 45px;
+            right: 35%;
+            z-index: 999;
+        }
+
+    </style>
+</head>
+<body>
+    <div class="container row">
+        <div class="left-section s12 m6">
+            <!-- <div class="right0">
+                <a href="livres.html" style="align-items: center; display: flex; color: black;"><i class="material-icons">arrow_back</i> Go Back</a> 
+            </div> -->
+            <div class="right1">
+                <div style="flex: 0.4; margin-left: 16px;">
+                    <img id="book-cover" class="cover-img" src="" alt="Book Cover">
+                    <i id="edit-cover-icon" class="material-icons edit-icon">edit</i>
+                </div>
+                <div style="flex: 0.9;margin-bottom: 42px;">
+                    <input type="file" id="cover-file" class="file-input" accept="image/*">
+                    <div id="book-info" class="book-info">
+                        <!-- Attributs du livre s'afficheront ici -->
+                    </div>
+                </div>
+                
+            </div>
+            <div class="right2">
+                <h4 style="color: gray;">Vue GLobale</h4>
+                <div class="right21">
+                    <div class="card card-size" style="flex: 1;">
+                        <div class="card-content">
+                            <span class="title">Note</span> <br>
+                            <p id="Note_moy" class="card-title">Chargement...</p>
+                        </div>
+                    </div>
+                    
+                    <div class="card card-size" style="flex: 1; margin-left: 5px;margin-right: 5px;">
+                        <div class="card-content">
+                            <span class="title">Chiffre D'affaire</span> <br>
+                            <p id="chiffreAffaire" class="card-title">56500</p>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <div class="right22">
+                    <div class="card card-size" style="flex: 1;">
+                        <div class="card-content">
+                            <span class="title">Nbr_vues</span> <br>
+                            <p id="Nbr_vues" class="card-title">Chargement...</p>
+                        </div>
+                    </div>
+                    <div class="card card-size" style="flex: 1; margin-left: 5px;margin-right: 5px;">
+                        <div class="card-content">
+                            <span class="title">Nbr Lectures</span> <br>
+                            <p id="Note" class="card-title">Chargement...</p>
+                        </div>
+                    </div>
+                    
+                </div>
+
+                <!-- <div class="right21">
+                    <div class="card card-size" style="flex: 1;">
+                        <div class="card-content">
+                            <span class="title">Chiffre sur ventes directs</span> <br>
+                            <p id="ChiffreDirect" class="card-title">31000</p>
+                        </div>
+                    </div>
+                    <div class="card card-size" style="flex: 1; margin-left: 5px;margin-right: 5px;">
+                        <div class="card-content">
+                            <span class="title">Chiffre sur abonnement</span> <br>
+                            <p id="ChiffreAbonnement" class="card-title">25000</p>
+                        </div>
+                    </div>
+                    
+                </div> -->
+            </div>
+            <div class="ventes" id="ventes-container">
+                <h4 style="color: gray; margin-bottom: 16px;">Ventes directes du livre courant</h4>
+                <table id="sales-table" class="highlight">
+                    <thead>
+                        <tr>
+                            <th>Quantité</th>
+                            <th>Prix Total</th>
+                            <th>Date de Vente</th>
+                            <th>Redevance</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body">
+                        <!-- Les lignes seront ajoutées dynamiquement ici -->
+                    </tbody>
+                </table>
+                <div id="total-redevance">
+                    <strong>Total des redevances : <span id="total-amount">0.00 XAF</span></strong>
+                </div>
+            </div>
+            
+            <div class="ventes-abonnement" id="ventes-container-abonnement">
+                <h4 style="color: gray; margin-bottom: 16px; margin-top: 56px;">Ventes par abonnement du livre courant</h4>
+                <table id="sales-table-ab" class="highlight">
+                    <thead>
+                        <tr>
+                            <th>Quantité</th>
+                            <th>Prix Total</th>
+                        </tr>
+                    </thead>
+                    <tbody id="sales-table-body-ab">
+                        <!-- Les lignes seront ajoutées dynamiquement ici -->
+                    </tbody>
+                </table>
+                <div id="total-redevance-ab">
+                    <strong>Total des redevances : <span id="total-amount-ab">0.00 XAF</span></strong>
+                </div>
+            </div>
+            
+            <div class="revues" id="revues-container">
+                <h4 style="color: gray;margin-bottom: 56px;">Revues</h1>
+                <!-- Les revues seront affichées ici dynamiquement -->
+            </div> 
+            <div>
+                <div class="series" id="series-container">
+                
+                </div> 
+                
+            </div>
+            <div id="add-series-modal" class="modal">
+                <div class="modal-content">
+                    <h4>Ajouter une série</h4>
+                    <div class="input-field">
+                        <input id="series-title" type="text" class="validate">
+                        <label for="series-title">Titre de la série</label>
+                    </div>
+                    <div class="input-field">
+                        <input id="series-description" type="text" class="validate">
+                        <label for="series-description">Description de la série</label>
+                    </div>
+                    <div class="file-field input-field">
+                        <div class="btn">
+                            <span>Image</span>
+                            <input type="file" id="series-image">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Télécharger une image">
+                        </div>
+                    </div>
+                    <div class="file-field input-field">
+                        <div class="btn">
+                            <span>PDF</span>
+                            <input type="file" id="series-pdf">
+                        </div>
+                        <div class="file-path-wrapper">
+                            <input class="file-path validate" type="text" placeholder="Télécharger un fichier PDF">
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <a href="#!" id="save-series-btn" class="modal-close waves-effect waves-green btn-flat">Enregistrer</a>
+                </div>
+            </div>
+
+            <div id="edit-episode-modal" class="modal">
+                <div class="modal-content">
+                    <h4>Modifier l'épisode</h4>
+                    
+                    <!-- Titre de l'épisode -->
+                    <div class="input-field">
+                        <input id="edit-episode-title" type="text" class="validate">
+                        <label for="edit-episode-title"></label>
+                    </div>
+            
+                    <!-- Description de l'épisode -->
+                    <div class="input-field">
+                        <textarea id="edit-episode-description" class="materialize-textarea"></textarea>
+                        <label for="edit-episode-description"></label>
+                    </div>
+            
+                    <!-- Image de l'épisode -->
+                    <div class="input-field">
+                        <label for="edit-episode-image-upload"></label>
+                        <div class="episode-image-preview" style="margin-bottom: 15px;">
+                            <img id="edit-episode-image" src="https://via.placeholder.com/150x150" alt="Image de l'épisode" style="width: 50px; height: 50px;">
+                        </div>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>Changer d'image</span>
+                                <input type="file" id="edit-episode-image-upload" accept="image/*" onchange="updateImagePreview(this)">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Aucune image sélectionnée">
+                            </div>
+                        </div>
+                    </div>
+            
+                    <!-- Lien vers le PDF -->
+                    <div class="input-field">
+                        <label for="edit-episode-pdf-url">PDF de l'épisode</label>
+                        <div class="file-field input-field">
+                            <div class="btn">
+                                <span>Choisir un PDF</span>
+                                <input type="file" id="edit-episode-pdf-upload" accept="application/pdf" onchange="updatePdfLink(this)">
+                            </div>
+                            <div class="file-path-wrapper">
+                                <input class="file-path validate" type="text" placeholder="Aucun PDF sélectionné">
+                            </div>
+                        </div>
+                        <div class="episode-pdf-link" style="margin-top: 10px;">
+                            <a id="edit-episode-pdf" href="#" target="_blank" class="blue-text">Voir le PDF actuel</a>
+                        </div>
+                    </div>
+                </div>
+            
+                <div class="modal-footer">
+                    <a href="#!" id="save-episode-changes" class="modal-close waves-effect waves-green btn-flat">Enregistrer</a>
+                </div>
+            </div>
+            
+        </div>
+        <div class="right-section s12 m6">
+            <form id="book-form" class="form-container">
+                <p style="color: gray; margin-bottom: 20px;">Details</p>
+                <!-- Formulaire pour éditer les autres informations du livre -->
+                <div class="input-field">
+                    <p style="display: flex; justify-content: space-between;">
+                        <label>
+                            <input type="checkbox" id="is-serie-checkbox" />
+                            <span>serie?</span>
+                        </label>
+
+                        <label>
+                            <input type="checkbox" id="is-blue_papers-checkbox" />
+                            <span>blue papers?</span>
+                        </label>
+                    </p>
+                </div>
+                <br>
+                <div class="form-group input-field">
+                    <input id="book-title" type="text" class="validate">
+                    <label for="book-title">Titre</label>
+                </div>
+                <div class="form-group input-field">
+                    <input id="book-year" type="number" class="validate">
+                    <label for="book-year">Année</label>
+                </div>
+                <div class="form-group input-field">
+                    <input id="book-format" type="text" class="validate">
+                    <label for="book-format">Format</label>
+                </div>
+                <div class="form-group input-field">
+                    <input id="book-pages" type="number" class="validate">
+                    <label for="book-pages">Nombre de Pages</label>
+                </div>
+                <div class="form-group input-field">
+                    <input id="book-edition" type="text" class="validate">
+                    <label for="book-edition">Édition</label>
+                </div>
+                <div class="form-group input-field">
+                    <textarea id="book-summary" class="materialize-textarea"></textarea>
+                    <label for="book-summary">Résumé</label>
+                </div>
+                
+                <button type="submit" class="btn blue">Enregistrer</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Firebase and App Scripts -->
+    <script type="module">
+        // Importations Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+        import { getFirestore, doc, updateDoc, collection, query, where, getDocs } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore.js";
+        import { getStorage, ref, uploadBytesResumable, getDownloadURL } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-storage.js";
+
+        // Configuration Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+        
+
+        
+        // Récupérer le livre depuis le localStorage
+        const selectedBook = JSON.parse(localStorage.getItem('selectedBook'));
+
+        function calculateAverage(arr) {
+            if (arr.length === 0) return 0; // Gérer le cas d'un tableau vide
+
+            // Extraire et parser les valeurs de la clé 'note' dans chaque objet
+            const notes = arr.map(item => parseFloat(item.note));
+
+            // Calculer la somme des valeurs de 'note'
+            const sum = notes.reduce((acc, curr) => acc + curr, 0);
+
+            // Calculer la moyenne
+            const average = sum / notes.length;
+
+            return parseFloat(average.toFixed(1)); // Arrondir à 1 décimale
+        }
+
+
+
+        // Initialisation des champs avec les données du livre
+        document.getElementById('book-cover').src = selectedBook.coverUrl || 'https://via.placeholder.com/200x300?text=Pas+d%27image'
+        document.getElementById('Note').innerHTML = `<p>${selectedBook.revues.length}</p>`
+        document.getElementById('Note_moy').innerHTML = `<p>${calculateAverage(selectedBook.revues)}</p>`
+        document.getElementById('Nbr_vues').innerHTML = `<p>${selectedBook.nbr_vues}</p>`
+
+        document.getElementById('book-info').innerHTML = `
+            <p><strong>Titre:</strong> ${selectedBook.name || 'Titre inconnu'}</p>
+            <p><strong>Auteur:</strong> ${selectedBook.hauteur || 'Auteur inconnu'}</p>
+            <p><strong>Année:</strong> ${selectedBook.caracteristiques?.annee || 'Année inconnue'}</p>
+            <p><strong>Format:</strong> ${selectedBook.caracteristiques?.format || 'Format inconnu'}</p>
+            <p><strong>Nombre de Pages:</strong> ${selectedBook.caracteristiques?.nbr_pages || 'Inconnu'}</p>
+            <p><strong>Édition:</strong> ${selectedBook.caracteristiques?.edition || 'Édition inconnue'}</p>
+        `;
+
+        // Pré-remplir le formulaire avec les informations du livre
+        document.getElementById('book-title').value = selectedBook.name || '';
+       
+        // document.getElementById('book-author').value = selectedBook.hauteur || '';
+        document.getElementById('book-year').value = selectedBook.caracteristiques?.annee || '';
+        document.getElementById('book-format').value = selectedBook.caracteristiques?.format || '';
+        document.getElementById('book-pages').value = selectedBook.caracteristiques?.nbr_pages || '';
+        document.getElementById('book-edition').value = selectedBook.caracteristiques?.edition || '';
+        document.getElementById('book-summary').value = selectedBook.summary || '';
+        document.getElementById('is-serie-checkbox').checked = !!selectedBook.is_serie;
+        document.getElementById('is-blue_papers-checkbox').checked = !!selectedBook.blue_papers;
+        
+
+        
+        // Mettez à jour les champs après la configuration initiale
+        M.updateTextFields();
+
+        // Fonction pour gérer la soumission du formulaire
+        document.getElementById('book-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const bookName = document.getElementById('book-title').value;
+            const booksCollection = collection(db, 'livres');
+            const q = query(booksCollection, where('name', '==', bookName));
+
+            try {
+                const querySnapshot = await getDocs(q);
+                
+                if (!querySnapshot.empty) {
+                    const bookDoc = querySnapshot.docs[0];
+                    const bookRef = doc(db, 'livres', bookDoc.id);
+
+                    await updateDoc(bookRef, {
+                        name: bookName,
+                        'caracteristiques.annee': document.getElementById('book-year').value,
+                        'caracteristiques.format': document.getElementById('book-format').value,
+                        'caracteristiques.nbr_pages': document.getElementById('book-pages').value,
+                        'caracteristiques.edition': document.getElementById('book-edition').value,
+                        summary: document.getElementById('book-summary').value,
+                        is_serie: document.getElementById('is-serie-checkbox').checked,
+                        blue_papers: document.getElementById('is-blue_papers-checkbox').checked
+                    });
+
+                    M.toast({ html: 'Livre mis à jour avec succès!', classes: 'rounded' });
+
+                    // Recharger les informations pour refléter les changements
+                    localStorage.setItem('selectedBook', JSON.stringify({
+                        ...selectedBook,
+                        name: bookName,
+                        //hauteur: document.getElementById('book-author').value,
+                        caracteristiques: {
+                            annee: document.getElementById('book-year').value,
+                            format: document.getElementById('book-format').value,
+                            nbr_pages: document.getElementById('book-pages').value,
+                            edition: document.getElementById('book-edition').value
+                        },
+                        resume: document.getElementById('book-summary').value
+                    }));
+                } else {
+                    M.toast({ html: 'Livre non trouvé.', classes: 'rounded' });
+                }
+            } catch (error) {
+                console.error('Erreur lors de la mise à jour du livre:', error);
+                M.toast({ html: 'Erreur lors de la mise à jour.', classes: 'rounded' });
+            }
+        });
+
+        // Gérer la modification de la couverture du livre
+        document.getElementById('edit-cover-icon').addEventListener('click', () => {
+            document.getElementById('cover-file').click();
+        });
+
+        document.getElementById('cover-file').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const storageRef = ref(storage, `livres/${selectedBook.name}/cover.jpg`);
+            const uploadTask = uploadBytesResumable(storageRef, file);
+
+            uploadTask.on('state_changed', 
+                (snapshot) => {
+                    // Gestion de l'état de l'upload si besoin
+                }, 
+                (error) => {
+                    console.error('Erreur de téléchargement:', error);
+                    M.toast({ html: 'Erreur lors du téléchargement.', classes: 'rounded' });
+                }, 
+                () => {
+                    getDownloadURL(uploadTask.snapshot.ref).then(async (downloadURL) => {
+                        document.getElementById('book-cover').src = downloadURL;
+
+                        const bookDoc = querySnapshot.docs[0];
+                        const bookRef = doc(db, 'livres', bookDoc.id);
+
+                        await updateDoc(bookRef, { coverUrl: downloadURL });
+
+                        // Mettre à jour l'URL de la couverture dans le localStorage
+                        localStorage.setItem('selectedBook', JSON.stringify({
+                            ...selectedBook,
+                            coverUrl: downloadURL
+                        }));
+
+                        M.toast({ html: 'Couverture mise à jour avec succès!', classes: 'rounded' });
+                    });
+                }
+            );
+        });
+
+        
+        function displayEpisodes(episodes) {
+    const seriesContainer = document.getElementById('series-container');
+    seriesContainer.innerHTML = `
+        <div class="header-series">
+            <h4 style="color: gray;">Series</h4>
+            <button id="add-series-btn" class="btn-floating btn-large waves-effect waves-light blue fixed-action-btn">
+                <i class="material-icons">add</i>
+            </button>
+        </div>
+    `; // Vider le conteneur avant d'afficher les épisodes
+
+    if (episodes && episodes.length > 0) {
+        episodes.forEach((episode, index) => {
+            const episodeDiv = document.createElement('div');
+            episodeDiv.classList.add('episode-item');
+
+            episodeDiv.innerHTML = `
+                <div class="episode-left">
+                    <img src="${episode.image || 'https://via.placeholder.com/42x42'}" alt="${episode.titre || 'Image indisponible'}" class="episode-img"/>
+                </div>
+                <div class="episode-middle">
+                    <div class="episode-title">${episode.titre || 'Titre inconnu'}</div>
+                    <div class="episode-description">${episode.description || 'Pas de description disponible'}</div>
+                </div>
+                <div class="episode-right">
+                    <i class="material-icons episode-delete" data-index="${index}">delete</i>
+                    <span class="episode-date">${episode.date || 'Date inconnue'}</span>
+                </div>
+            `;
+            seriesContainer.appendChild(episodeDiv);
+
+            // Ajouter un écouteur d'événements pour ouvrir le modal de modification
+            episodeDiv.addEventListener('click', function() {
+                openEditEpisodeModal(index, episode);
+            });
+        });
+
+        // Ajouter des écouteurs pour les icônes de suppression
+        document.querySelectorAll('.episode-delete').forEach(icon => {
+            icon.addEventListener('click', function(event) {
+                event.stopPropagation(); // Empêcher l'événement click d'ouvrir le modal
+                const episodeIndex = this.getAttribute('data-index');
+                deleteEpisode(episodeIndex);
+            });
+        });
+    } else {
+        seriesContainer.innerHTML = '<p>Aucun épisode disponible pour cette série.</p>';
+    }
+}
+
+function openEditEpisodeModal(index, episode) {
+    // Remplir le modal avec les informations de l'épisode
+    document.getElementById('edit-episode-title').value = episode.titre || '';
+    document.getElementById('edit-episode-description').value = episode.description || '';
+    document.getElementById('edit-episode-image').src = episode.image || 'https://via.placeholder.com/42x42';
+    document.getElementById('edit-episode-pdf').href = episode.pdfUrl || '#';
+
+    // Afficher le modal
+    const editModal = document.getElementById('edit-episode-modal');
+    const instance = M.Modal.getInstance(editModal);
+    instance.open();
+
+    // Ajouter un écouteur d'événement pour enregistrer les modifications
+    document.getElementById('save-episode-changes').onclick = function() {
+        saveEpisodeChanges(index);
+    };
+}
+
+function saveEpisodeChanges(index) {
+    // Récupérer les valeurs modifiées
+    const updatedTitle = document.getElementById('edit-episode-title').value;
+    const updatedDescription = document.getElementById('edit-episode-description').value;
+    const updatedImage = document.getElementById('edit-episode-image').src;
+    const updatedPdfUrl = document.getElementById('edit-episode-pdf').href;
+
+    // Mettre à jour l'épisode correspondant
+    const updatedEpisode = {
+        titre: updatedTitle,
+        description: updatedDescription,
+        image: updatedImage,
+        pdfUrl: updatedPdfUrl
+    };
+
+    // Enregistrer les modifications (par exemple, mettre à jour la base de données)
+    updateEpisodeInDatabase(index, updatedEpisode);
+
+    // Fermer le modal
+    const editModal = document.getElementById('edit-episode-modal');
+    const instance = M.Modal.getInstance(editModal);
+    instance.close();
+}
+
+function updateEpisodeInDatabase(index, updatedEpisode) {
+    // Implémenter la logique pour mettre à jour l'épisode dans la base de données
+    console.log('Mise à jour de l\'épisode à l\'index', index, 'avec les nouvelles données:', updatedEpisode);
+}
+
+
+// Fonction pour supprimer un épisode (ajoutez la logique selon vos besoins)
+async function deleteEpisode(index) {
+    const bookId = selectedBook.id; // Assurez-vous que selectedBook.id est bien l'ID du livre
+
+    try {
+        // Supprimer l'épisode localement
+        selectedBook.episodes.splice(index, 1);
+
+        // Référence au document du livre
+        const bookDocRef = doc(db, 'livres', bookId);
+
+        // Mise à jour de l'attribut 'episodes' dans Firebase
+        await updateDoc(bookDocRef, {
+            episodes: selectedBook.episodes // Envoyer le tableau mis à jour
+        });
+
+        M.toast({ html: 'Épisode supprimé avec succès de Firebase', classes: 'rounded' });
+        console.log('Épisode supprimé avec succès de Firebase');
+
+        // Re-affichage des épisodes après la suppression
+        displayEpisodes(selectedBook.episodes);
+    } catch (error) {
+        console.error('Erreur lors de la suppression de l\'épisode : ', error);
+        M.toast({ html: 'Erreur lors de la suppression de l\'épisode', classes: 'rounded' });
+    }
+}
+
+
+// Afficher les épisodes si le livre est une série
+if (selectedBook.is_serie) {
+    displayEpisodes(selectedBook.episodes);
+}
+
+// Écouter les changements sur la case à cocher "is-serie-checkbox"
+document.getElementById('is-serie-checkbox').addEventListener('change', function() {
+    if (this.checked) {
+        displayEpisodes(selectedBook.episodes);
+    } else {
+        document.getElementById('series-container').innerHTML = '';
+    }
+});
+
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialisation du modal avec Materialize
+    const elems = document.querySelectorAll('.modal');
+    M.Modal.init(elems);
+
+    // Référence au bouton d'ajout de série
+    const addSeriesBtn = document.getElementById('add-series-btn');
+    const saveSeriesBtn = document.getElementById('save-series-btn');
+
+    // Afficher la date de publication actuelle
+    const seriesDateInput = document.getElementById('series-date');
+    const currentDate = new Date().toISOString().split('T')[0];
+    seriesDateInput.value = currentDate;
+
+    // Ouvrir le modal
+    addSeriesBtn.addEventListener('click', function() {
+        const modal = M.Modal.getInstance(document.getElementById('add-series-modal'));
+        modal.open();
+    });
+
+    // Sauvegarder la série
+    saveSeriesBtn.addEventListener('click', async function(event) {
+        event.preventDefault(); // Empêche la soumission par défaut du formulaire
+
+        const seriesTitle = document.getElementById('series-title').value.trim();
+        const seriesDescription = document.getElementById('series-description').value.trim();
+        const seriesImage = document.getElementById('series-image').files[0];
+        const seriesPdf = document.getElementById('series-pdf').files[0];
+
+        if (seriesTitle && seriesDescription && seriesImage && seriesPdf) {
+            // Créer les références de stockage
+            const imageRef = ref(storage, 'series_images/' + seriesImage.name);
+            const pdfRef = ref(storage, 'series_pdfs/' + seriesPdf.name);
+
+            try {
+                // Télécharger l'image
+                const imageSnapshot = await uploadBytesResumable(imageRef, seriesImage);
+                const imageUrl = await getDownloadURL(imageSnapshot.ref);
+
+                // Télécharger le PDF
+                const pdfSnapshot = await uploadBytesResumable(pdfRef, seriesPdf);
+                const pdfUrl = await getDownloadURL(pdfSnapshot.ref);
+
+                // Construire l'objet série
+                const newSeries = {
+                    titre: seriesTitle,
+                    description: seriesDescription,
+                    date: currentDate, // Date actuelle
+                    image: imageUrl,
+                    pdf: pdfUrl
+                };
+
+                const bookId = selectedBook.id; // ID du livre actuel
+                const bookDocRef = doc(db, 'livres', bookId);
+
+                // Ajouter la série au tableau 'episodes'
+                selectedBook.episodes.push(newSeries);
+
+                // Mettre à jour le document dans Firestore
+                await updateDoc(bookDocRef, {
+                    episodes: selectedBook.episodes
+                });
+
+                // Afficher le toast
+                M.toast({ html: 'Série ajoutée avec succès', classes: 'rounded' });
+
+                // Réinitialiser les champs du formulaire
+                document.getElementById('series-title').value = '';
+                document.getElementById('series-description').value = '';
+                document.getElementById('series-image').value = '';
+                document.getElementById('series-pdf').value = '';
+
+                // Rafraîchir l'affichage des épisodes
+                displayEpisodes(selectedBook.episodes);
+
+            } catch (error) {
+                console.error('Erreur lors de l\'ajout de la série : ', error);
+                M.toast({ html: 'Erreur lors de l\'ajout de la série', classes: 'rounded' });
+            }
+        } else {
+            M.toast({ html: 'Veuillez remplir tous les champs et télécharger les fichiers nécessaires', classes: 'rounded' });
+        }
+    });
+});
+
+
+
+// Fonction pour récupérer la valeur de pourcentageDirect depuis la collection 'global'
+async function getGlobalPercentageDirect() {
+            try {
+                const globalDocRef = doc(db, 'global', 'settings');
+                const globalDoc = await getDoc(globalDocRef);
+
+                if (globalDoc.exists()) {
+                    const data = globalDoc.data();
+                    return 100 - data.pourcentageDirect;
+                } else {
+                    console.error("Le document 'settings' dans la collection 'global' n'existe pas.");
+                    return 70; // Valeur par défaut si 'global' n'existe pas
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération du pourcentage de redevance:", error);
+                return 70; // Valeur par défaut en cas d'erreur
+            }
+        }
+
+        // Fonction principale pour gérer les ventes et les calculs de redevances pour un seul livre
+        async function handleSalesAndRoyalties() {
+            const bookId = selectedBook.id; // Remplacez par l'ID ou nom du livre courant
+
+            try {
+                const pourcentageDirect = await getGlobalPercentageDirect();
+
+                // Récupérer les ventes directes pour le livre courant
+                const ventesQuery = query(collection(db, 'ventes_direct'), where('livre', '==', bookId));
+                const querySnapshot = await getDocs(ventesQuery);
+                const bookSales = {};
+                const salesTableBody = document.getElementById('sales-table-body');
+                let totalRedevance = 0;
+
+                querySnapshot.forEach((venteDoc) => {
+                    const vente = venteDoc.data();
+                    const quantity = 1; // Chaque document de vente représente une vente unique
+
+                    // Ajouter ou mettre à jour les informations de vente pour le livre courant
+                    if (!bookSales[bookId]) {
+                        bookSales[bookId] = {
+                            coverUrl: '', // Valeur par défaut, sera mise à jour plus tard
+                            title: '',    // Valeur par défaut, sera mise à jour plus tard
+                            quantity: 0,
+                            totalPrice: 0,
+                            redevance: 0,
+                            saleDate: new Date(vente.date.seconds * 1000).toLocaleDateString() // Date du premier enregistrement
+                        };
+                    }
+                    bookSales[bookId].quantity += quantity; // Ajouter la quantité
+                });
+
+                // Après avoir agrégé toutes les données, récupérer les informations du livre courant
+                const livreQuerySnapshot = await getDocs(query(collection(db, 'livres'), where('id', '==', bookId)));
+                if (!livreQuerySnapshot.empty) {
+                    livreQuerySnapshot.forEach((livreDoc) => {
+                        const livre = livreDoc.data();
+                        const bookData = bookSales[bookId];
+                        bookData.coverUrl = livre.coverUrl || 'default-cover-url.jpg';
+                        bookData.title = livre.name || 'Titre non disponible';
+                        bookData.price = parseFloat(livre.price) || 0; // Obtenir le prix du livre
+                        bookData.totalPrice = bookData.price * bookData.quantity; // Calculer le prix total pour ce livre
+
+                        // Calculer la redevance avec la valeur dynamique [100 - pourcentageDirect]
+                        bookData.redevance = bookData.totalPrice * (pourcentageDirect / 100);
+                    });
+                } else {
+                    console.error('Aucun livre trouvé avec l\'ID:', bookId);
+                }
+
+                // Afficher les lignes dans le tableau après avoir agrégé les données
+                Object.values(bookSales).forEach((item) => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>x${item.quantity}</td>
+                        <td>${item.totalPrice.toFixed(2)} XAF</td>
+                        <td>${item.saleDate}</td>
+                        <td>${item.redevance.toFixed(2)} XAF</td>
+                    `;
+                    salesTableBody.appendChild(row);
+
+                    // Mettre à jour le montant total des redevances
+                    totalRedevance += item.redevance;
+                    document.getElementById('total-amount').textContent = totalRedevance.toFixed(2) + ' XAF';
+                });
+            } catch (error) {
+                console.error('Erreur lors de la gestion des ventes et des redevances:', error);
+            }
+        }
+
+        // Appel de la fonction pour gérer les ventes et les redevances lors du chargement de la page
+        document.addEventListener('DOMContentLoaded', handleSalesAndRoyalties);
+
+
+
+// Fonction pour récupérer le pourcentage d'abonnement depuis la collection 'global'
+async function getGlobalPercentageAbonnement() {
+    try {
+        const settingsDocRef = doc(db, 'global', 'settings');
+        const settingsDoc = await getDoc(settingsDocRef);
+
+        if (settingsDoc.exists()) {
+            const data = settingsDoc.data();
+            return data.pourcentageAbonnement || 0; // Utiliser 0 si non défini
+        } else {
+            console.error("Le document 'settings' dans la collection 'global' n'existe pas.");
+            return 0; // Valeur par défaut si 'global' n'existe pas
+        }
+    } catch (error) {
+        console.error("Erreur lors de la récupération du pourcentage d'abonnement:", error);
+        return 0; // Valeur par défaut en cas d'erreur
+    }
+}
+
+// Fonction principale pour gérer les ventes par abonnement pour le livre courant
+async function displaySubscriptionSales() {
+    const currentBookId = selectedBook.id; // Remplacez par l'ID ou nom du livre courant
+
+    try {
+        const royaltiesPercentage = await getGlobalPercentageAbonnement();
+
+        // Récupérer les abonnements
+        const subscriptionsQuery = query(collection(db, 'abonnements'));
+        const subscriptionsSnapshot = await getDocs(subscriptionsQuery);
+        const bookStatistics = {};
+        const salesTableBody = document.getElementById('sales-table-body-ab');
+        let totalRoyalties = 0;
+
+        subscriptionsSnapshot.forEach((subscriptionDoc) => {
+            const subscriptionData = subscriptionDoc.data();
+            const booksPages = subscriptionData.livres_pages || [];
+            const subscriptionPrice = subscriptionData.prix || 3000; // Valeur par défaut si non définie
+
+            // Calculer le montant après application du pourcentage
+            const adjustedAmount = subscriptionPrice - (subscriptionPrice * (royaltiesPercentage / 100));
+
+            // Filtrer les livres_pages pour le livre courant
+            const relevantBooks = booksPages.filter(book => book.livre === currentBookId);
+            const totalPages = relevantBooks.reduce((total, book) => total + (book.pages_lue || 0), 0);
+
+            relevantBooks.forEach((book) => {
+                const pagesRead = book.pages_lue || 0;
+                const revenue = (pagesRead / (totalPages || 1)) * adjustedAmount;
+
+                if (!bookStatistics[currentBookId]) {
+                    bookStatistics[currentBookId] = {
+                        coverUrl: '', // Valeur par défaut, sera mise à jour plus tard
+                        title: '',    // Valeur par défaut, sera mise à jour plus tard
+                        pagesRead: 0,
+                        totalAmount: 0,
+                        saleDate: '' // Valeur par défaut, sera mise à jour plus tard
+                    };
+                }
+                bookStatistics[currentBookId].pagesRead += pagesRead;
+                bookStatistics[currentBookId].totalAmount += revenue;
+            });
+        });
+
+        // Après avoir agrégé toutes les données, récupérer les informations du livre courant
+        const bookSnapshot = await getDocs(query(collection(db, 'livres'), where('id', '==', currentBookId)));
+        if (!bookSnapshot.empty) {
+            bookSnapshot.forEach((bookDoc) => {
+                const bookData = bookDoc.data();
+                const currentBookData = bookStatistics[currentBookId];
+                currentBookData.coverUrl = bookData.coverUrl || 'default-cover-url.jpg';
+                currentBookData.title = bookData.name || 'Titre non disponible';
+                // Vous pouvez également inclure les revues si nécessaire
+                // currentBookData.revues = bookData.revues || [];
+            });
+        } else {
+            console.error('Aucun livre trouvé avec l\'ID:', currentBookId);
+        }
+
+        // Afficher les lignes dans le tableau après avoir agrégé les données
+        Object.values(bookStatistics).forEach((item) => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td>${item.pagesRead}</td>
+                <td>${item.totalAmount.toFixed(2)} XAF</td>
+            `;
+            salesTableBody.appendChild(row);
+
+            // Mettre à jour le montant total
+            totalRoyalties += item.totalAmount;
+            document.getElementById('total-amount-ab').textContent = `${totalRoyalties.toFixed(2)} XAF`;
+        });
+    } catch (error) {
+        console.error('Erreur lors de l\'affichage des ventes par abonnement:', error);
+    }
+}
+
+// Appel de la fonction pour afficher les ventes par abonnement lors du chargement de la page
+document.addEventListener('DOMContentLoaded', displaySubscriptionSales);
+
+
+        
+    </script>
+
+
+
+<script>
+    // Récupère le livre sélectionné depuis le localStorage
+const selectedBook = JSON.parse(localStorage.getItem('selectedBook'));
+
+// Sélectionne le conteneur des revues
+const revuesContainer = document.getElementById('revues-container');
+
+// Vérifie si le livre sélectionné existe et contient des revues
+if (selectedBook && selectedBook.revues && Array.isArray(selectedBook.revues)) {
+    // Parcours chaque revue dans le tableau des revues
+    selectedBook.revues.forEach((revue) => {
+        // Crée un élément div pour la revue
+        const revueDiv = document.createElement('div');
+        revueDiv.classList.add('revue-item');
+        revueDiv.style.display = 'flex'; // Pour aligner l'image et les infos en ligne
+        revueDiv.style.justifyContent = 'space-between';
+        revueDiv.style.marginBottom = '20px'; // Ajoute un espace entre chaque revue
+        revueDiv.style.position = 'relative'; // Pour positionner la date en bas à droite
+        revueDiv.style.paddingBottom = '25px'; // Espace pour la date
+
+        // Crée un élément div pour l'image de l'utilisateur
+        const userImgDiv = document.createElement('div');
+        userImgDiv.classList.add('user-img-container');
+
+        // Crée un élément img pour l'image de l'utilisateur
+        const userImg = document.createElement('img');
+        userImg.src = revue.user_img || '../images/default.jpg'; // Utilise une image par défaut si l'image utilisateur est absente
+        userImg.alt = 'Image utilisateur';
+        userImg.style.width = '42px';
+        userImg.style.height = '42px';
+        userImg.style.borderRadius = '100%';
+
+        // Ajoute l'image dans son conteneur
+        userImgDiv.appendChild(userImg);
+
+        // Crée un élément div pour les infos utilisateur et la note
+        const infoDiv = document.createElement('div');
+        infoDiv.classList.add('review-info-container');
+        infoDiv.style.marginLeft = '10px'; // Espace entre l'image et les infos
+        infoDiv.style.flexGrow = '1'; // Permet à ce div de prendre toute la largeur disponible
+
+        // Crée un élément pour afficher le nom de l'utilisateur
+        const userNameElement = document.createElement('span');
+        userNameElement.textContent = revue.user_name || 'Utilisateur anonyme';
+        userNameElement.style.fontWeight = 'bold';
+        userNameElement.style.marginRight = '10px'; // Espace entre le nom et les étoiles
+
+        // Crée un élément pour afficher la note sous forme d'étoiles
+        const noteContainer = document.createElement('span');
+        const note = parseInt(revue.note) || 0;
+        for (let i = 0; i < 5; i++) {
+            const star = document.createElement('span');
+            star.innerHTML = '&#9733;'; // Étoile pleine
+            star.style.color = i < note ? 'orange' : '#ccc'; // Étoile orange si la note est atteinte, grise sinon
+            noteContainer.appendChild(star);
+        }
+
+        // Crée un élément pour la date
+        const dateElement = document.createElement('p');
+        dateElement.textContent = `${revue.date || 'Non spécifiée'}`;
+        dateElement.style.fontSize = '12px';
+        dateElement.style.color = '#666';
+        dateElement.style.position = 'absolute';
+        dateElement.style.bottom = '0';
+        dateElement.style.right = '0';
+
+        // Crée un élément pour l'avis
+        const avisElement = document.createElement('p');
+        avisElement.textContent = revue.avis || 'Aucun avis.';
+        avisElement.style.fontSize = '14px';
+        avisElement.style.marginTop = '10px';
+
+        // Ajoute le nom, les étoiles, et l'avis dans le conteneur des infos
+        infoDiv.appendChild(userNameElement);
+        infoDiv.appendChild(noteContainer);
+        infoDiv.appendChild(avisElement);
+
+        // Ajoute les conteneurs image et infos dans le div de la revue
+        revueDiv.appendChild(userImgDiv);
+        revueDiv.appendChild(infoDiv);
+
+        // Ajoute la date au conteneur principal
+        revueDiv.appendChild(dateElement);
+
+        // Ajoute le div de la revue dans le conteneur principal
+        revuesContainer.appendChild(revueDiv);
+    });
+} else {
+    // Affiche un message si aucune revue n'est disponible
+    const noRevuesMessage = document.createElement('p');
+    noRevuesMessage.textContent = 'Aucune revue disponible pour ce livre.';
+    revuesContainer.appendChild(noRevuesMessage);
+}
+</script>
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

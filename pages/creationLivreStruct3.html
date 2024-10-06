@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Détails</title>
+
+    <!-- Inclure Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5; 
+            padding: 0;
+            margin: 0;
+            width: 100%;
+            overflow-x: hidden;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-family: 'Roboto', sans-serif;/* Materialize utilise la police Roboto */
+        }
+        .head-block, .body-block {
+            width: 70%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .head-block {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            width: 70%;
+            padding: 16px;
+            box-sizing: border-box;
+        }
+        .head-sub {
+            width: 35%;
+            display: flex;
+            flex-direction: column;
+            background-color: #fff;
+            justify-content: center;
+            font-weight: bold;
+            padding: 16px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            height: 120px;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .head-sub p {
+            margin: 0;
+        }
+        .body-block {
+            padding: 16px;
+            display: flex;
+            width: 67.5%;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            background-color: #fff;
+            margin-bottom: 16px;
+            box-sizing: border-box;
+            height: 200px;
+        }
+        .body-block p {
+            margin: 0 0 8px 0;
+        }
+        .description textarea {
+            height: 150px;
+            resize: none;
+        }
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 34px;
+            height: 20px;
+            margin-top: 8px;
+        }
+
+        .switch input {
+            display: none;
+        }
+
+        #publication-animation {
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            text-align: center;
+            z-index: 9999;
+        }
+
+        .book {
+            width: 100px;
+            height: 140px;
+            background-color: #f39c12;
+            position: relative;
+            margin: 0 auto;
+            transform-origin: center;
+            animation: openBook 2s ease-in-out forwards;
+        }
+
+        .cover {
+            width: 100%;
+            height: 100%;
+            background-color: #d35400;
+            transform-origin: left;
+            transform: rotateY(0deg);
+            animation: flipCover 2s ease-in-out forwards;
+        }
+        #loader {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+
+.loader {
+    border: 8px solid #f3f3f3;
+    border-top: 8px solid #3498db;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    animation: spin 2s linear infinite;
+}
+
+@keyframes spin {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+
+    </style>
+</head>
+<body>
+    <div class="head-block">
+        <div id="block1" class="head-sub">
+            <p style="font-size: 14px;color: rgb(44, 44, 151);" >Informations relatives à l'ebook papers</p>
+            <p style="margin-top: 16px; color: green;"><img src="../images/checked.png" alt="" width="16px" height="16px"> finalisé</p>
+        </div>
+        <div id="block2" class="head-sub" style="margin: 0 16px;">
+            <p style="font-size: 14px;color: rgb(44, 44, 151);">Contenu de l'ebook papers</p>
+            <p style="margin-top: 16px; color: green;"><img src="../images/checked.png" alt="" width="16px" height="16px"> finalisé</p>
+        </div>
+        <div id="block3" class="head-sub" style="border-bottom: 3px solid red;">
+            <p style="font-size: 14px;">Prix de l'ebook papers</p>
+            <p style="margin-top: 16px; color: green;"><img src="../images/checked.png" alt="" width="16px" height="16px"> finalisé</p>
+        </div>
+    </div>
+
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);">Inscription a blue papers</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px;font-weight: bold;">Augmentez le nombre de lecteus potentiels. Maximisez votre potentiel de ventes. (facultatif)</p>
+            <p style="font-size: 11px;">Blue papers est un programme gratuit reservé aux ebooks papers. Il vous permet de bénéficier de remises et de participer a des offres dans le cadre de l'abonnement papers.</p>
+            
+            <label class="switch">
+                <input type="checkbox" id="blue-papers-toggle">
+                <span class="slider round"></span>
+            </label>
+            <label for="blue-papers-toggle" style="font-size: 11px; margin-left: 10px;">
+                Activer Blue Papers
+            </label>
+        </div>
+    </div>
+    
+    <div class="body-block">
+        <div style="flex: 0.2;">
+            <p style="font-size: 16px;font-weight: bold;color: rgb(81, 75, 75);" >Tariffication, redevance et distribution</p>
+        </div>
+        <div style="flex: 0.8;">
+            <p style="font-size: 11px">Définissez les prix catalogue de votre ebook Kindle ci-dessous<span style="color: rgb(44, 44, 151);font-size: 11px;">Comment la tarification et les redevances sont calculées?</span></p>
+        
+            <div style="font-size: 11px;display: flex;color: rgb(44, 44, 151);margin-top: 16px;">
+                <div style="flex: 1;">
+                   site de vente
+                </div>
+                <div style="flex: 1;">
+                    Prix catalogue
+                </div>
+                <div style="flex: 1;">
+                    Redevance
+                </div>
+            </div>
+            <div style="font-size: 11px;display: flex;">
+                <div style="border: 0.3px solid lightgray;padding: 8px;display: flex;align-items: center; flex: 1;">
+                    <p style="font-weight: bold;">papers mobile</p>
+                </div>
+                <div style="border: 0.3px solid lightgray;padding: 8px;display: flex;align-items: center;flex: 1;">
+                    <input type="text" id="price-input" style="width: 80px;">XAF
+                </div>
+                <div style="border: 0.3px solid lightgray;padding: 8px;justify-content: center;display: flex;align-items: center;flex: 1;">
+                    <p id="redevance-output"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div  style="display:flex;justify-content:space-between;width: 67.5%;cursor: pointer;">
+        <p style=" padding:4px;border-radius:4px;font-size: 11px;background-color: #fff;width: 150px;text-align: center;" class="gestion" id="section2">< Retour aux informations</p>
+        <p style=" padding:4px;border-radius:4px;font-size: 11px;background-color: rgb(247, 196, 27);width: 150px;text-align: center;" id="publier">Publier votre ebook papers</p>
+    </div>
+
+    <div id="loader" style="display: none;">
+        <div class="loader"></div>
+    </div>
+
+
+    <!-- Ajouter Materialize JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script type="module">
+         import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+        import { getStorage, ref, uploadString, getDownloadURL } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+        import {uploadBytesResumable } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-storage.js";
+
+        var firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        // Initialize Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+        const storage = getStorage(app);
+
+        async function getGlobalPercentageDirect() {
+            const globalDocRef = db.collection('global').doc('settings');
+            const globalDoc = await globalDocRef.get();
+
+            if (globalDoc.exists) {
+                const data = globalDoc.data();
+                return 100 - data.pourcentageDirect;
+            } else {
+                console.error("Le document 'settings' dans la collection 'global' n'existe pas.");
+                return 70; // Valeur par défaut si 'global' n'existe pas
+            }
+        }
+
+        
+        
+        document.addEventListener('DOMContentLoaded', async function () {
+    const selectedBook = JSON.parse(localStorage.getItem('selectedBook')) || {};
+    const toggleBluePapers = document.getElementById('blue-papers-toggle');
+    const priceInput = document.getElementById('price-input');
+    const redevanceOutput = document.getElementById('redevance-output');
+
+    // Initialisation des valeurs depuis localStorage
+    // toggleBluePapers.checked = selectedBook.blue_papers || false;
+    // priceInput.value = selectedBook.price || '10000';
+
+    // Fonction pour obtenir le pourcentage global (exemple)
+    async function getGlobalPercentageDirect() {
+        // Simule une requête asynchrone pour obtenir le pourcentage
+        // Vous pouvez remplacer ceci par une requête réelle à une API
+        return new Promise((resolve) => {
+            setTimeout(() => {
+                resolve(0.7); // 70% en exemple
+            }, 1000);
+        });
+    }
+
+    const pourcentageDirect = await getGlobalPercentageDirect();
+
+    // Calcul de la redevance
+    function calculateRedevance() {
+        const price = parseFloat(priceInput.value) || 0;
+        const redevance = (pourcentageDirect * price).toFixed(2);
+        redevanceOutput.textContent = redevance + ' XAF';
+    }
+
+    calculateRedevance();
+
+    // Mise à jour du localStorage et recalcul de la redevance
+    toggleBluePapers.addEventListener('change', function () {
+        selectedBook.blue_papers = toggleBluePapers.checked;
+        localStorage.setItem('selectedBook', JSON.stringify(selectedBook));
+    });
+
+    priceInput.addEventListener('input', function () {
+        selectedBook.price = priceInput.value;
+        localStorage.setItem('selectedBook', JSON.stringify(selectedBook));
+        calculateRedevance();
+    });
+});
+
+
+function base64ToFile(base64String, fileName, mimeType) {
+    // Décoder la base64 en Blob
+    const byteCharacters = atob(base64String.split(',')[1]); // Décoder la base64
+    const byteNumbers = new Array(byteCharacters.length);
+    
+    for (let i = 0; i < byteCharacters.length; i++) {
+        byteNumbers[i] = byteCharacters.charCodeAt(i);
+    }
+
+    const byteArray = new Uint8Array(byteNumbers);
+    const blob = new Blob([byteArray], {type: mimeType});
+
+    // Transformer le Blob en File
+    return new File([blob], fileName, {type: mimeType});
+}
+
+let isPublishing = false; // Variable de contrôle
+
+document.getElementById("publier").addEventListener("click", async function () {
+    if (isPublishing) return; // Si déjà en cours de publication, ne rien faire
+    isPublishing = true; // Mettre à jour l'état
+
+    // Afficher le loader
+    document.getElementById("loader").style.display = 'flex';
+
+    try {
+        const pdfData = localStorage.getItem('pdfData');
+        const imgData = localStorage.getItem('imgData');
+
+        const pdfFile = base64ToFile(pdfData, 'document.pdf', 'application/pdf');
+        const imageFile = base64ToFile(imgData, 'image.png', 'image/png');
+
+        const uniqueId = crypto.randomUUID(); // Générer un ID unique
+        const coverRef = ref(storage, `covers/${uniqueId}_${imageFile.name}`);
+        const pdfRef = ref(storage, `books/${uniqueId}_${pdfFile.name}`);
+
+
+        const coverData = await imageFile.arrayBuffer();
+        await uploadString(coverRef, btoa(String.fromCharCode(...new Uint8Array(coverData))), 'base64', { contentType: imageFile.type });
+        const coverUrl = await getDownloadURL(coverRef);
+
+        const pdfDatas = await pdfFile.arrayBuffer();
+        await uploadBytesResumable(pdfRef, pdfDatas, { contentType: pdfFile.type });
+        const pdfUrl = await getDownloadURL(pdfRef);
+
+        let selectedBook = JSON.parse(localStorage.getItem("bookDetails")) || {};
+        const name = selectedBook.name;
+        const hauteur = localStorage.getItem('id');
+        const price = document.getElementById('price-input').value;
+        const genre = selectedBook.genre;
+        const summary = selectedBook.summary;
+        const small_summary = selectedBook.small_summary;
+        const is_serie = selectedBook.is_serie === 'true';
+        const annee = selectedBook.date;
+        const NbPage = selectedBook.NbPage;
+        const edition = "Papers book";
+        const format = selectedBook.format;
+        //const uniqueId = crypto.randomUUID(); 
+        const documentId = `${name}_${uniqueId}`;
+
+        const newBookRef = doc(db, 'livres', documentId);
+        await setDoc(newBookRef, {
+            id: documentId, 
+            name,
+            hauteur,
+            price: Number(price),
+            genre,
+            summary,
+            caracteristiques: {
+                annee: Number(annee),
+                edition,
+                format,
+                nbr_pages: NbPage
+            },
+            small_summary,
+            coverUrl,
+            pdfUrl,
+            is_serie,
+            blue_papers: false,
+            dateAdded: new Date().toISOString(),
+            nbr_lecture: 0,
+            nbr_user_note: 0,
+            nbr_vues: 0,
+            note: '0',
+            revues: [],
+            verdict: "loading",
+            episodes: []
+        });
+
+        alert("Publié avec succès");
+    } catch (error) {
+        console.error("Erreur lors de la publication:", error);
+        alert("Une erreur est survenue. Veuillez réessayer.");
+    } finally {
+        // Cacher le loader après la publication
+        document.getElementById("loader").style.display = 'none';
+        isPublishing = false; // Réinitialiser l'état
+        window.location.href = "livres.html";
+    }
+});
+
+      
+
+    document.getElementById("section2").addEventListener("click", function() {
+        window.location.href = "creationLivreStruct2.html";
+    });
+    document.getElementById("block2").addEventListener("click", function() {
+        window.location.href = "creationLivreStruct2.html";
+    });
+    document.getElementById("block1").addEventListener("click", function() {
+        window.location.href = "creationLivreStruct.html";
+    });
+
+
+
+
+    </script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
+</body>
+</html>

@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ventes</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body { background-color: #f5f5f5; }
+        .side-nav { width: 240px; background-color: #f5f5f5; transition: width 0.5s ease-in-out; box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1); position: fixed; height: 100vh; }
+        .side-nav.collapsed { width: 80px; }
+        .side-nav ul { padding: 0; margin: 0; list-style: none; }
+        .side-nav li { position: relative; }
+        .side-nav a { display: flex; align-items: center; padding: 15px 20px; color: #333; text-decoration: none; transition: background-color 0.3s ease; }
+        .side-nav a:hover { background-color: #e0e0e0; }
+        .side-nav .menu-icon { margin-right: 20px; transition: margin-right 0.5s ease-in-out; }
+        .side-nav.collapsed .menu-icon { margin-right: 0; text-align: center; }
+        .side-nav .menu-text { font-size: 16px; transition: opacity 0.5s ease-in-out; }
+        .side-nav.collapsed .menu-text { opacity: 0; }
+        .side-nav li:not(:last-child)::after { content: ''; position: absolute; bottom: 0; left: 0; width: 100%; height: 1px; background-color: #ccc; }
+        .content { margin-left: 240px; padding: 20px; transition: margin-left 0.5s ease-in-out; }
+        .side-nav.collapsed + .content { margin-left: 80px; }
+        .sales-table, .subscription-table { margin-top: 20px; border-collapse: collapse; width: 100%; background-color: #fff;}
+        .sales-table th, .subscription-table th, .sales-table td, .subscription-table td { border: 1px solid #ddd; padding: 8px; }
+        .sales-table th, .subscription-table th { background-color: #f2f2f2; text-align: left; }
+        .sales-table tr:hover, .subscription-table tr:hover { background-color: #fff; }
+        .title { font-size: 24px; margin-bottom: 10px; font-weight: bold; }
+        .total-row { font-weight: bold; }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="side-nav">
+        <ul>
+            <li><a href="#" id="toggle-sidebar"><i class="material-icons menu-icon">menu</i><span class="menu-text">Menu</span></a></li>
+            <li><a href="statistiques.html"><i class="material-icons menu-icon">insights</i><span class="menu-text">Statistiques</span></a></li>
+            <li><a href="livres.html"><i class="material-icons menu-icon">book</i><span class="menu-text">Livres</span></a></li>
+            <li><a href="profile.html"><i class="material-icons menu-icon">person</i><span class="menu-text">Profile</span></a></li>
+            <li><a href="contact.html"><i class="material-icons menu-icon">contact_mail</i><span class="menu-text">Contactez Nous</span></a></li>
+            <li><a href="ventes.html"><i class="material-icons menu-icon">shopping_cart</i><span class="menu-text">Ventes</span></a></li>
+            <li><a href="paiements.html"><i class="material-icons menu-icon">payments</i><span class="menu-text">Paiements</span></a></li>
+
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h1 class="title">Ventes Directes</h1>
+        <table class="striped sales-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Titre</th>
+                    <th>Qté</th>
+                    <th>Montant</th>
+                    <th>Date</th>
+                    <th>Redevance</th>
+                    
+                </tr>
+            </thead>
+            <tbody id="sales-table-body">
+                <!-- Contenu sera inséré ici via JavaScript -->
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="5">TOTAL :</td>
+                    <td id="total-amount">0 XAF</td>
+                </tr>
+            </tfoot>
+        </table>
+
+        <h1 class="title">Ventes par Abonnement</h1> <!-- Libellé ajouté ici -->
+        <table class="striped sales-table">
+            <thead>
+                <tr>
+                    <th>Image</th>
+                    <th>Titre</th>
+                    <th>Nbr_lecteurs</th>
+                    <th>Pages Lues</th>
+                    <th>Montant</th>
+                </tr>
+            </thead>
+            <tbody id="subscription-table-body">
+                <!-- Contenu sera inséré ici via JavaScript -->
+            </tbody>
+            <tfoot>
+                <tr class="total-row">
+                    <td colspan="4">TOTAL :</td>
+                    <td id="total-amount-ab">0 XAF</td>
+                </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <!-- Script -->
+    <script>
+        // Configuration Firebase
+        var firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        // Initialize Firebase
+        firebase.initializeApp(firebaseConfig);
+        var db = firebase.firestore();
+
+        // Gestion du toggle de la sidebar
+        document.getElementById('toggle-sidebar').addEventListener('click', function() {
+            var sidebar = document.querySelector('.side-nav');
+            sidebar.classList.toggle('collapsed');
+        });
+
+       // Récupérer les ventes directes et afficher dans le tableau
+var authorName = localStorage.getItem('auteur');
+var authorId = localStorage.getItem('id'); 
+var salesTableBody = document.getElementById('sales-table-body');
+var totalRedevance = 0; // Pour stocker le total des redevances
+
+// Objet pour stocker les ventes par livre
+var bookSales = {};
+
+// Fonction pour récupérer la valeur de pourcentageDirect depuis la collection 'global'
+async function getGlobalPercentageDirect() {
+    const globalDocRef = db.collection('global').doc('settings');
+    const globalDoc = await globalDocRef.get();
+
+    if (globalDoc.exists) {
+        const data = globalDoc.data();
+        return 100 - data.pourcentageDirect;
+    } else {
+        console.error("Le document 'settings' dans la collection 'global' n'existe pas.");
+        return 70; // Valeur par défaut si 'global' n'existe pas
+    }
+}
+
+// Fonction principale pour gérer les ventes et les calculs de redevances
+async function handleSalesAndRoyalties() {
+    try {
+        // Récupérer la valeur de [100 - pourcentageDirect]
+        const pourcentageDirect = await getGlobalPercentageDirect();
+
+        // Récupérer les ventes directes
+        db.collection('ventes_direct').where('auteur', '==', authorId).get().then(function(querySnapshot) {
+            querySnapshot.forEach(function(venteDoc) {
+                var vente = venteDoc.data();
+                var livreName = vente.livre; // Le champ 'livre' dans 'ventes_direct'
+                var quantity = 1; // Chaque document de vente représente une vente unique
+
+                // Ajouter ou mettre à jour les informations de vente pour chaque livre
+                if (!bookSales[livreName]) {
+                    bookSales[livreName] = {
+                        coverUrl: '', // Valeur par défaut, sera mise à jour plus tard
+                        title: '',    // Valeur par défaut, sera mise à jour plus tard
+                        quantity: 0,
+                        totalPrice: 0,
+                        redevance: 0,
+                        saleDate: new Date(vente.date.seconds * 1000).toLocaleDateString() // Date du premier enregistrement
+                    };
+                }
+                bookSales[livreName].quantity += quantity; // Ajouter la quantité
+            });
+
+            // Après avoir agrégé toutes les données, récupérer les informations des livres
+            var bookNames = Object.keys(bookSales);
+            var bookPromises = bookNames.map(function(livreName) {
+                return db.collection('livres').where('id', '==', livreName).get().then(function(livresSnapshot) {
+                    if (!livresSnapshot.empty) {
+                        livresSnapshot.forEach(function(livreDoc) {
+                            var livre = livreDoc.data();
+                            var bookData = bookSales[livreName];
+                            bookData.coverUrl = livre.coverUrl || 'default-cover-url.jpg';
+                            bookData.title = livre.name || 'Titre non disponible';
+                            bookData.price = parseFloat(livre.price) || 0; // Obtenir le prix du livre
+                            bookData.totalPrice = bookData.price * bookData.quantity; // Calculer le prix total pour ce livre
+
+                            // Calculer la redevance avec la valeur dynamique [100 - pourcentageDirect]
+                            bookData.redevance = bookData.totalPrice * (pourcentageDirect / 100);
+                        });
+                    } else {
+                        console.error('Aucun livre trouvé avec le nom:', livreName);
+                    }
+                }).catch(function(error) {
+                    console.error('Erreur lors de la récupération des livres:', error);
+                });
+            });
+
+            // Attendre que toutes les informations des livres soient récupérées
+            Promise.all(bookPromises).then(function() {
+                // Réinitialiser le total de la redevance
+                totalRedevance = 0;
+
+                // Afficher les lignes dans le tableau après avoir agrégé les données
+                Object.values(bookSales).forEach(function(item) {
+                    var row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td style="text-align: center; vertical-align: middle;">
+                            <img src="${item.coverUrl}" alt="Cover" style="width: 40px; height: 50px;">
+                        </td>
+                        <td>${item.title}</td>
+                        <td>x${item.quantity}</td>
+                        <td>${item.totalPrice.toFixed(2)} XAF</td>
+                        <td>${item.saleDate}</td>
+                        <td>${item.redevance.toFixed(2)} XAF</td>
+                    `;
+                    salesTableBody.appendChild(row);
+
+                    // Mettre à jour le montant total des redevances
+                    totalRedevance += item.redevance;
+                    document.getElementById('total-amount').textContent = totalRedevance.toFixed(2) + ' XAF';
+                });
+            }).catch(function(error) {
+                console.error('Erreur lors de la récupération des informations des livres:', error);
+            });
+        }).catch(function(error) {
+            console.error('Erreur lors de la récupération des ventes directes:', error);
+        });
+    } catch (error) {
+        console.error('Erreur lors de la récupération du pourcentage de redevance:', error);
+    }
+}
+
+// Appel de la fonction pour gérer les ventes et les redevances
+handleSalesAndRoyalties();
+
+
+
+
+
+
+        // Récupérer les ventes par abonnement et afficher dans le tableau
+var authorName = localStorage.getItem('auteur'); // Auteur stocké dans le localStorage
+var subscriptionTableBody = document.getElementById('subscription-table-body');
+
+// Objet pour stocker les totaux par livre
+var bookTotals = {};
+
+// Récupérer le pourcentage d'abonnement depuis la collection global
+db.collection('global').doc('settings').get().then(function(settingsDoc) {
+    var settings = settingsDoc.data();
+    var pourcentageAbonnement = settings.pourcentageAbonnement || 0; // Utiliser 0 si non défini
+
+    // Récupérer les abonnements
+    return db.collection('abonnements').get().then(function(querySnapshot) {
+        var totalPagesRead = 0; // Pour le total des pages lues pour l'auteur
+
+        querySnapshot.forEach(function(abonnementDoc) {
+            var abonnement = abonnementDoc.data();
+            var livresPages = abonnement.livres_pages || [];
+            var prixAbonnement = abonnement.prix || 3000; // Par défaut, utiliser 3000 si prix non défini
+
+            // Calculer le montant après avoir appliqué le pourcentage
+            var montantApresPourcentage = prixAbonnement - (prixAbonnement * (pourcentageAbonnement / 100));
+
+            // Filtrer les livres_pages par auteur
+            var filteredBooks = livresPages.filter(book => book.auteur === authorName);
+            totalPagesRead += filteredBooks.reduce((acc, book) => acc + (book.pages_lue || 0), 0);
+
+            filteredBooks.forEach(function(book) {
+                var livreName = book.livre;
+                var pagesRead = book.pages_lue || 0;
+                var amount = (pagesRead / (totalPagesRead || 1)) * montantApresPourcentage;
+
+                if (!bookTotals[livreName]) {
+                    bookTotals[livreName] = {
+                        coverUrl: '', // Valeur par défaut, sera mise à jour plus tard
+                        title: '',    // Valeur par défaut, sera mise à jour plus tard
+                        pagesRead: 0,
+                        totalAmount: 0,
+                        revues: [] // Initialiser revues comme un tableau vide
+                    };
+                }
+                bookTotals[livreName].pagesRead += pagesRead;
+                bookTotals[livreName].totalAmount += amount;
+            });
+        });
+
+        // Après avoir agrégé toutes les données, récupérer les informations des livres
+        var bookNames = Object.keys(bookTotals);
+        var bookPromises = bookNames.map(function(livreName) {
+            return db.collection('livres').where('id', '==', livreName).get().then(function(livresSnapshot) {
+                if (!livresSnapshot.empty) {
+                    livresSnapshot.forEach(function(livreDoc) {
+                        var livre = livreDoc.data();
+                        var bookData = bookTotals[livreName];
+                        bookData.coverUrl = livre.coverUrl || 'default-cover-url.jpg';
+                        bookData.title = livre.name || 'Titre non disponible';
+                        bookData.revues = livre.revues || [];
+                    });
+                } else {
+                    console.error('Aucun livre trouvé avec le nom:', livreName);
+                }
+            }).catch(function(error) {
+                console.error('Erreur lors de la récupération des livres:', error);
+            });
+        });
+
+        // Attendre que toutes les informations des livres soient récupérées
+        return Promise.all(bookPromises).then(function() {
+            var totalAmount = 0;
+
+            // Afficher les lignes dans le tableau après avoir agrégé les données
+            Object.values(bookTotals).forEach(function(item) {
+                var row = document.createElement('tr');
+                row.innerHTML = `
+                    <td style="text-align: center; vertical-align: middle;">
+                        <img src="${item.coverUrl}" alt="Cover" style="width: 40px; height: 50px;">
+                    </td>
+                    <td>${item.title}</td>
+                    <td>${item.revues.length}</td>
+                    <td>${item.pagesRead}</td>
+                    <td>${item.totalAmount.toFixed(2)} XAF</td>
+                `;
+                subscriptionTableBody.appendChild(row);
+
+                // Mettre à jour le montant total
+                totalAmount += item.totalAmount;
+                document.getElementById('total-amount-ab').textContent = `${totalAmount.toFixed(2)} XAF`;
+            });
+        });
+    }).catch(function(error) {
+        console.error('Erreur lors de la récupération des abonnements:', error);
+    });
+}).catch(function(error) {
+    console.error('Erreur lors de la récupération des paramètres globaux:', error);
+});
+
+
+    </script>
+</body>
+</html>

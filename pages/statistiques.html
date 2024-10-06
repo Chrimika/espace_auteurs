@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Statistiques</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f5f5f5;
+        }
+
+        .side-nav {
+            width: 240px;
+            background-color: #f5f5f5;
+            transition: width 0.5s ease-in-out;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed; /* Fixed position to keep sidebar in place */
+            height: 100vh; /* Full height */
+        }
+
+        .side-nav.collapsed {
+            width: 80px;
+        }
+
+        .side-nav ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .side-nav li {
+            position: relative;
+        }
+
+        .side-nav a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .side-nav a:hover {
+            background-color: #e0e0e0;
+        }
+
+        .side-nav .menu-icon {
+            margin-right: 20px;
+        }
+
+        .side-nav.collapsed .menu-icon {
+            margin-right: 0;
+            text-align: center;
+        }
+
+        .side-nav .menu-text {
+            font-size: 16px;
+        }
+
+        .side-nav.collapsed .menu-text {
+            display: none;
+        }
+
+        .side-nav li:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #ccc;
+        }
+
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            transition: margin-left 0.5s ease-in-out;
+        }
+
+        .side-nav.collapsed + .content {
+            margin-left: 80px;
+        }
+        .card-size {
+            width: 40%;
+        }
+        .card-container {
+            display: flex;
+            justify-content: space-evenly;
+            flex-wrap: wrap;
+        }
+        .title {
+            font-size: 16px;
+            font-weight: bold;
+            font-family: sans-serif;
+        }
+        .card-info {
+            font-size: 32px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="side-nav" id="sidebar">
+        <ul>
+            <li><a href="#" id="toggle-sidebar"><i class="material-icons menu-icon">menu</i><span class="menu-text">Menu</span></a></li>
+            <li><a href="statistiques.html"><i class="material-icons menu-icon">insights</i><span class="menu-text">Statistiques</span></a></li>
+            <li><a href="livres.html"><i class="material-icons menu-icon">book</i><span class="menu-text">Livres</span></a></li>
+            <li><a href="profile.html"><i class="material-icons menu-icon">person</i><span class="menu-text">Profile</span></a></li>
+            <li><a href="contact.html"><i class="material-icons menu-icon">contact_mail</i><span class="menu-text">Contactez Nous</span></a></li>
+            <li><a href="ventes.html"><i class="material-icons menu-icon">shopping_cart</i><span class="menu-text">Ventes</span></a></li>
+            <li><a href="paiements.html"><i class="material-icons menu-icon">payments</i><span class="menu-text">Paiements</span></a></li>
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h1>Statistiques</h1>
+        <div class="card-container">
+            <div class="card card-size">
+                <div class="card-content">
+                    <span class="title">Chiffre D'affaire</span> <br>
+                    <p id="chiffreAffaire" class="card-title">Chargement...</p>
+                </div>
+            </div>
+            <div class="card card-size">
+                <div class="card-content">
+                    <span class="title">Nombre de Livres</span> <br>
+                    <p id="livreCount" class="card-title">Chargement...</p>
+                </div>
+            </div>
+            <div class="card card-size">
+                <div class="card-content">
+                    <span class="title">Vues total</span> <br>
+                    <p id="vuesTotal" class="card-title">Chargement...</p>
+                </div>
+            </div>
+            <div class="card card-size">
+                <div class="card-content">
+                    <span class="title">Pages lues total</span> <br>
+                    <p id="pagesLues" class="card-title">Chargement...</p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- JavaScript pour la sidebar -->
+    <script>
+        document.getElementById('toggle-sidebar').addEventListener('click', function() {
+            const sidebar = document.getElementById('sidebar');
+            sidebar.classList.toggle('collapsed');
+        });
+    </script>
+
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore.js"></script>
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js";
+
+        const firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        async function calculateTotalRevenue() {
+            const authorName = localStorage.getItem('auteur'); // Auteur stocké dans le localStorage
+            let totalRevenue = 0;
+            let totalPagesRead = 0; // Variable pour stocker le total des pages lues
+
+            try {
+                // Récupérer les paramètres globaux pour les pourcentages
+                const globalDocRef = doc(db, 'global', 'settings');
+                const globalDoc = await getDoc(globalDocRef);
+                const settings = globalDoc.exists() ? globalDoc.data() : { pourcentageDirect: 30, pourcentageAbonnement: 30 };
+
+                // Récupérer les ventes directes de l'auteur
+                const salesQuery = query(collection(db, 'ventes_direct'), where('auteur', '==', authorName));
+                const salesSnapshot = await getDocs(salesQuery);
+
+                for (const venteDoc of salesSnapshot.docs) {
+                    const vente = venteDoc.data();
+                    const livreName = vente.livre;
+
+                    // Récupérer le prix du livre
+                    const livreQuery = query(collection(db, 'livres'), where('id', '==', livreName));
+                    const livresSnapshot = await getDocs(livreQuery);
+                    if (!livresSnapshot.empty) {
+                        const livre = livresSnapshot.docs[0].data();
+                        const bookPrice = parseFloat(livre.price) || 0;
+
+                        // Calculer la redevance pour la vente directe
+                        const pourcentageDirect = parseFloat(settings.pourcentageDirect) || 0;
+                        const redevanceDirect = bookPrice * ((100 - pourcentageDirect) / 100);
+                        totalRevenue += redevanceDirect;
+                    }
+                }
+
+                // Récupérer les ventes par abonnement de l'auteur
+                const abonnementsSnapshot = await getDocs(collection(db, 'abonnements'));
+                for (const abonnementDoc of abonnementsSnapshot.docs) {
+                    const abonnement = abonnementDoc.data();
+                    const livresPages = abonnement.livres_pages || [];
+                    const prixAbonnement = parseFloat(abonnement.prix) || 3000; // Prix d'abonnement par défaut
+
+                    // Calculer le montant après application du pourcentage abonnement
+                    const pourcentageAbonnement = parseFloat(settings.pourcentageAbonnement) || 0;
+                    const montantApresPourcentage = prixAbonnement * (1 - pourcentageAbonnement / 100);
+
+                    // Filtrer les livres de l'auteur
+                    const filteredBooks = livresPages.filter(book => book.auteur === authorName);
+
+                    filteredBooks.forEach(book => {
+                        const pagesLues = parseFloat(book.pages_lue) || 0;
+                        totalPagesRead += pagesLues; // Ajouter les pages lues au total
+
+                        const montantPourLivre = (pagesLues / totalPagesRead) * montantApresPourcentage;
+                        totalRevenue += montantPourLivre;
+                    });
+                }
+
+                // Afficher le chiffre d'affaires total
+                document.getElementById('chiffreAffaire').textContent = totalRevenue.toFixed(2) + ' XAF';
+
+                // Afficher le nombre total de pages lues
+                document.getElementById('pagesLues').textContent = totalPagesRead;
+
+            } catch (error) {
+                console.error('Erreur lors du calcul du chiffre d\'affaires total:', error);
+                document.getElementById('chiffreAffaire').textContent = 'Erreur';
+                document.getElementById('pagesLues').textContent = 'Erreur';
+            }
+        }
+
+        // Appel de la fonction pour calculer le chiffre d'affaires total et le nombre de pages lues
+        calculateTotalRevenue();
+
+        async function fetchBookCount() {
+            const q = query(collection(db, 'livres'), where('hauteur', '==', localStorage.getItem('id')));
+            const querySnapshot = await getDocs(q);
+            document.getElementById('livreCount').textContent = querySnapshot.size;
+        }
+
+        fetchBookCount();
+    </script>
+</body>
+</html>

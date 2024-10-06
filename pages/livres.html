@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Livres</title>
+    <!-- Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- Materialize CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/css/materialize.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color:#f5f5f5;
+        }
+
+        /* Sidebar Styles */
+        .side-nav {
+            width: 240px;
+            background-color: #f5f5f5;
+            transition: width 0.5s ease-in-out;
+            box-shadow: 2px 0 5px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            height: 100vh;
+        }
+
+        .side-nav.collapsed {
+            width: 80px;
+        }
+
+        .side-nav ul {
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+
+        .side-nav li {
+            position: relative;
+        }
+
+        .side-nav a {
+            display: flex;
+            align-items: center;
+            padding: 15px 20px;
+            color: #333;
+            text-decoration: none;
+            transition: background-color 0.3s ease;
+        }
+
+        .side-nav a:hover {
+            background-color: #e0e0e0;
+        }
+
+        .side-nav .menu-icon {
+            margin-right: 20px;
+            transition: margin-right 0.5s ease-in-out;
+        }
+
+        .side-nav.collapsed .menu-icon {
+            margin-right: 0;
+            text-align: center;
+        }
+
+        .side-nav .menu-text {
+            font-size: 16px;
+            transition: opacity 0.5s ease-in-out;
+        }
+
+        .side-nav.collapsed .menu-text {
+            opacity: 0;
+        }
+
+        .side-nav li:not(:last-child)::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 1px;
+            background-color: #ccc;
+        }
+
+        /* Content Styles */
+        .content {
+            margin-left: 240px;
+            padding: 20px;
+            transition: margin-left 0.5s ease-in-out;
+
+        }
+
+        .side-nav.collapsed + .content {
+            margin-left: 80px;
+        }
+
+        .book-block {
+            display: flex;
+            width: 90%;
+            height: 300px;
+            background-color: white;
+            margin: 10px 0;
+            box-shadow: 0px 2px 5px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            overflow: hidden;
+            padding: 8px;
+        }
+
+        .book-image-container {
+            width: 40%;
+            height: 100%;
+            display: flex;
+            align-items: center;
+            margin-left: 20px;
+            border-right: 0.1px solid lightgray;
+        }
+
+        .book-image {
+            max-width: 20%;
+            max-height: 100%;
+            object-fit: cover;
+        }
+
+        .book-info {
+            width: 60%;
+            padding: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: flex-start;
+
+        }
+
+        .book-title {
+            font-size: 18px;
+            font-weight: bold;
+            text-align: left;
+            margin-left: 28px;
+            max-width: 40%;
+        }
+
+
+        .create-bouton{
+            background-color: rgb(247, 196, 27); 
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            height: 40px;
+            width: 120px;
+            border-radius: 8px;
+            text-decoration: none;
+            justify-content: center;
+            color: black;
+            margin-top: 10px;
+            
+        }
+
+        .small-icon {
+        font-size: 15px;
+        margin-right: 5px;
+        }
+
+        .limited-text {
+            display: -webkit-box; /* Pour activer le comportement de ligne-clamp */
+            -webkit-line-clamp: 5; /* Limite à 5 lignes */
+            -webkit-box-orient: vertical; /* Fixe l'orientation verticale */
+            overflow: hidden; /* Cache le texte excédentaire */
+            text-overflow: ellipsis; /* Ajoute des ellipses ("...") si le texte dépasse */
+            line-height: 1.2em; /* Ajuste la hauteur des lignes si nécessaire */
+            max-height: 6em; /* 5 lignes x 1.2em */
+        }
+
+        /* Responsive Styles */
+        @media (max-width: 600px) {
+            .content {
+                margin-left: 80px;
+            }
+            .books-container {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="side-nav" id="sidebar">
+        <ul>
+            <li>
+                <a href="#" id="toggle-sidebar">
+                    <i class="material-icons menu-icon">menu</i>
+                    <span class="menu-text">Menu</span>
+                </a>
+            </li>
+            <li>
+                <a href="statistiques.html">
+                    <i class="material-icons menu-icon">insights</i>
+                    <span class="menu-text">Statistiques</span>
+                </a>
+            </li>
+            <li>
+                <a href="livres.html">
+                    <i class="material-icons menu-icon">book</i>
+                    <span class="menu-text">Livres</span>
+                </a>
+            </li>
+            <li>
+                <a href="profile.html">
+                    <i class="material-icons menu-icon">person</i>
+                    <span class="menu-text">Profile</span>
+                </a>
+            </li>
+            <li>
+                <a href="contact.html">
+                    <i class="material-icons menu-icon">contact_mail</i>
+                    <span class="menu-text">Contactez Nous</span>
+                </a>
+            </li>
+            <li>
+                <a href="ventes.html">
+                    <i class="material-icons menu-icon">shopping_cart</i>
+                    <span class="menu-text">Ventes</span>
+                </a>
+            </li>
+            <li><a href="paiements.html"><i class="material-icons menu-icon">payments</i><span class="menu-text">Paiements</span></a></li>
+
+        </ul>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+        <h4>Créez. Gérez. Publiez</h4>
+        <p style="font-size: 12px;">Publiez un nouvel ouvrage en cliquant sur Créer. ou gerez vos oeuvre existantes depuis votre bibliothèque ci-dessous</p>
+        <div style="background-color: #fff; width: 90%; padding: 16px; display: flex;">
+            <div style="flex: 0.7;">
+                <P style=" font-size: 14px;"> <span style="color: brown; font-size: 12px;font-weight: bold;">MISE A JOUR</span> Créez un nouvel ouvrage ou une nouvelle série. </P>
+                <p>
+                    Adressez vous aux lecteurs en leurs proposant le format qu'ils apprécient le plus. Vous pouvez désormais publier un livre électronique. Si vous publiez une série, vous pouvez créer une page de série Papers et ajouter vos ouvrages.
+                </p>
+            </div>
+            <div style="flex: 0.3; display: flex; justify-content: center;width: 100%;">
+                    <a href="creationLivreStruct.html" class="create-bouton">
+                        <i class="material-icons small-icon">add</i>
+                        <p style="font-size: 15px;">Créer</p>
+                    </a>
+            </div>
+        </div>
+        <h6 style="font-weight: 500; color: gray; margin: 30px 0;">Bibliothèque</h6>
+        <div id="books-container" class="books-container">
+            <!-- Les cartes de livres seront injectées ici par JavaScript -->
+            <div class="progress">
+                <div class="indeterminate"></div>
+            </div>
+        </div>
+    </div>
+
+    
+
+    <!-- Firebase and App Scripts -->
+    <!-- Firebase App (Modular) -->
+    <script type="module">
+        // Importations Firebase
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-app.js";
+        import { getFirestore, collection, query, where, getDocs, updateDoc } from "https://www.gstatic.com/firebasejs/9.6.11/firebase-firestore.js";
+
+        // Configuration Firebase (identique à celle de statistiques.html)
+        const firebaseConfig = {
+            apiKey: "AIzaSyADLk-YUqWpKbyCSsXxk-W5RKl0_pKDy_A",
+            authDomain: "paper-d9ad5.firebaseapp.com",
+            projectId: "paper-d9ad5",
+            storageBucket: "paper-d9ad5.appspot.com",
+            messagingSenderId: "966837266031",
+            appId: "1:966837266031:web:cacecb421f912557210f9a",
+            measurementId: "G-6NYLXR467G"
+        };
+
+        // Initialisation Firebase
+        const app = initializeApp(firebaseConfig);
+        const db = getFirestore(app);
+
+        // Fonction pour récupérer et afficher les livres
+        async function fetchAndDisplayBooks() {
+    const booksContainer = document.getElementById('books-container');
+    const authorId = localStorage.getItem('id'); // Récupère l'id stocké dans le localStorage
+
+    if (!authorId) {
+        booksContainer.innerHTML = '<p>Aucun auteur sélectionné.</p>';
+        return;
+    }
+
+    try {
+        const q = query(
+            collection(db, 'livres'),
+            where('hauteur', '==', authorId), // Condition pour l'auteur
+            
+        );
+
+        const querySnapshot = await getDocs(q);
+
+        // Vider le contenu précédent
+        booksContainer.innerHTML = '';
+
+
+        if (querySnapshot.empty) {
+            booksContainer.innerHTML = '<p>Aucun livre trouvé pour cet auteur.</p>';
+            return;
+        }
+
+        // Filtrer les livres qui ont un verdict différent de 'deleted'
+        const filteredBooks = querySnapshot.docs.filter(doc => doc.data().verdict !== 'deleted');
+
+        if (filteredBooks.length === 0) {
+            booksContainer.innerHTML = '<p>Aucun livre disponible.</p>';
+            return;
+        }
+
+        filteredBooks.forEach((doc) => {
+    const bookData = doc.data();
+    const bookBlock = document.createElement('div');
+    bookBlock.classList.add('book-block');
+
+    // Définit l'état du livre (en ligne, en attente ou rejeté)
+    let bookState = '';
+    let stateColor = '#0cc0df'; // Bleu par défaut
+    let gestionButton = ''; // Bouton de gestion vide par défaut
+
+    if (bookData.verdict === 'accepted') {
+        bookState = 'En ligne';
+        gestionButton = `
+            <p style="border:0.5px solid black; padding:8px;border-radius:8px;margin-top:20%" class="gestion">Gérer le livre</p>
+        `;
+    } else if (bookData.verdict === 'rejected') {
+        bookState = 'Rejeté';
+        stateColor = 'red'; // Rouge pour les livres rejetés
+        gestionButton = `
+            <p id="supprimer" style="border:0.5px solid black; padding:8px;border-radius:8px;margin-top:20%" class="gestion">Supprimer</p>
+        `;
+    }else if (bookData.verdict === 'loading') {
+        bookState = 'En attente';
+        stateColor = 'green'; // Vert pour les livres en attente
+        gestionButton = `
+            <p id="supprimer" style="border:0.5px solid black; padding:8px;border-radius:8px;margin-top:20%" class="gestion">Supprimer</p>
+        `;
+    }
+
+    bookBlock.innerHTML = `
+        <div class="book-image-container">
+            <img src="${bookData.coverUrl || 'https://via.placeholder.com/200x300?text=Pas+d%27image'}" alt="${bookData.name}" class="book-image">
+            <div class="book-title">
+                <p class="limited-text">${bookData.name || 'Titre inconnu'}</p>
+                <p style="font-size:11px; font-weight:400">De ${localStorage.getItem('auteur')}</p>
+            </div>
+        </div>
+        <div class="book-info" style="font-size:11px; font-weight:400; width: 100%;display:flex;flex-direction:column">
+            <div style="display: flex; width: 100%; border-bottom: 0.1px solid lightgray">
+                <div style="width:100% ">
+                    <p>ebook papers</p>
+                    <p style="color:${stateColor}; font-weight: bold" id="state">${bookState}</p> <!-- État en ligne ou en attente -->
+                    <p>publié le ${bookData.dateAdded}</p>
+                </div>
+                <div style="width:100%">
+                    <p>${bookData.price} XAF</p>
+                    <p>ID : ${bookData.id}</p>
+                </div>
+            </div>
+            <div style="display:flex;justify-content:end;width:100%;">
+                ${gestionButton}
+                <p style="border:0.5px solid black; padding:8px;border-radius:8px;margin-top:20%;margin-left:8px" class="details">Modifier</p>
+            </div>
+        </div>
+    `;
+
+    // Gestion du clic sur le bouton "Gérer le livre"
+    if (bookData.verdict === 'accepted' || bookData.verdict === 'loading') {
+        const gestionElement = bookBlock.querySelector('.gestion');
+        gestionElement.addEventListener('click', (event) => {
+            event.stopPropagation();
+            localStorage.setItem('selectedBook', JSON.stringify(bookData));
+            window.location.href = 'detailsLivre.html';
+        });
+    }
+
+    // Gestion du clic pour "Supprimer" lorsque le verdict est "rejected"
+    if (bookData.verdict === 'rejected') {
+        const supprimerElement = bookBlock.querySelector('#supprimer');
+        supprimerElement.addEventListener('click', async (event) => {
+            event.stopPropagation();
+
+            // Afficher un loader
+            supprimerElement.innerHTML = 'Suppression...';
+
+            try {
+                // Mettre à jour le verdict du livre à "deleted" dans Firestore
+                await updateDoc(doc.ref, {
+                    verdict: 'deleted'
+                });
+
+                // Afficher une notification après la suppression
+                alert('Livre supprimé avec succès.');
+
+                // Réinitialiser l'affichage ou recharger la liste des livres
+                supprimerElement.innerHTML = 'Supprimé';
+                bookBlock.style.opacity = 0.5; // Optionnel : diminuer l'opacité du livre supprimé
+            } catch (error) {
+                console.error('Erreur lors de la suppression du livre:', error);
+                alert('Erreur lors de la suppression. Veuillez réessayer.');
+                supprimerElement.innerHTML = 'Supprimer'; // Remettre le bouton à son état initial
+            }
+        });
+    }
+
+    // Gestion du clic pour 'modifier' (présent dans tous les cas)
+    const detailsElement = bookBlock.querySelector('.details');
+    detailsElement.addEventListener('click', (event) => {
+        event.stopPropagation();
+        localStorage.setItem('selectedBook', JSON.stringify(bookData));
+        window.location.href = 'detailsLivreStruct.html';
+    });
+
+    booksContainer.appendChild(bookBlock);
+});
+
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des livres:', error);
+        booksContainer.innerHTML = '<p>Une erreur est survenue lors du chargement des livres.</p>';
+    }
+}
+// Appel de la fonction au chargement de la page
+window.addEventListener('DOMContentLoaded', () => {
+    fetchAndDisplayBooks();
+
+    // Gestion du toggle de la sidebar
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggle-sidebar');
+
+    toggleBtn.addEventListener('click', () => {
+        sidebar.classList.toggle('collapsed');
+    });
+});
+
+    </script>
+</body>
+</html>
