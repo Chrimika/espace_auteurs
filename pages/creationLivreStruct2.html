@@ -149,7 +149,7 @@
                 </span>
             </p>
         
-            <input type="file" id="edit-episode-pdf-upload" accept="application/pdf" onchange="updatePdfLink(this)" disabled>
+            <input type="file" id="edit-episode-pdf-upload" accept="application/pdf" onchange="updatePdfLink(this)">
             
             <label for="edit-episode-pdf-upload" class="custom-file-upload">
                 Téléchargez votre manuscrit
@@ -199,7 +199,7 @@
                     <!-- L'aperçu de l'image apparaîtra ici -->
                 </div>
                 <div class="validatedImg">
-                    <input type="file" id="edit-episode-img-upload" accept="image/*" onchange="updateImgLink(this)" disabled>
+                    <input type="file" id="edit-episode-img-upload" accept="image/*" onchange="updateImgLink(this)">
                     
                     <label for="edit-episode-img-upload" class="custom-file-upload">
                         Rechercher
@@ -229,7 +229,7 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/materialize/1.0.0/js/materialize.min.js"></script>
 
     <script>
-        let selectedBook = JSON.parse(localStorage.getItem("selectedBook")) || {};
+        //let selectedBook = JSON.parse(localStorage.getItem("selectedBook")) || {};
 
 // Fonction pour mettre à jour le lien PDF et stocker dans selectedBook
 function updatePdfLink(input) {
@@ -237,8 +237,8 @@ function updatePdfLink(input) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            selectedBook.pdfUrl = e.target.result; // Mise à jour de selectedBook
-            localStorage.setItem('selectedBook', JSON.stringify(selectedBook)); // Mise à jour du localStorage
+            //selectedBook.pdfUrl = e.target.result; // Mise à jour de selectedBook
+            localStorage.setItem('pdfData', e.target.result); // Mise à jour du localStorage
 
             document.getElementById("validated").style.display = 'flex';
             document.getElementById("upload-message").innerText = `Le fichier ${file.name} a été téléchargé`;
@@ -257,8 +257,8 @@ function updateImgLink(input) {
     if (file) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            selectedBook.coverUrl = e.target.result; // Mise à jour de selectedBook
-            localStorage.setItem('selectedBook', JSON.stringify(selectedBook)); // Mise à jour du localStorage
+            //selectedBook.coverUrl = e.target.result; // Mise à jour de selectedBook
+            localStorage.setItem('imgData', e.target.result); // Mise à jour du localStorage
 
             const img = document.createElement('img');
             img.src = selectedBook.coverUrl;
@@ -275,8 +275,8 @@ function updateImgLink(input) {
 
 // Charger les données stockées dans le stockage local au chargement de la page
 window.onload = function() {
-    const pdfData = selectedBook.pdfUrl;
-    const imgData = selectedBook.coverUrl;
+    const pdfData = localStorage.getItem('pdfData');
+    const imgData = localStorage.getItem('imgData');
     
     if (pdfData) {
         document.getElementById("validated").style.display = 'flex';
@@ -289,27 +289,28 @@ window.onload = function() {
 
     if (imgData) {
         const img = document.createElement('img');
-        img.src = imgData;
+        img.src = imgData; // Utiliser imgData ici
         img.style.width = '100%'; // Ajustez si nécessaire
         img.style.height = 'auto'; // Ajustez si nécessaire
-        document.getElementById("img-cover").innerHTML = '';
+        document.getElementById("img-cover").innerHTML = ''; // Effacer le contenu précédent
         document.getElementById("img-cover").appendChild(img);
         document.getElementById("validatedImg").style.display = 'flex';
         document.getElementById("upload-message-img").innerText = 'Couverture chargée';
     }
 };
 
+
 document.getElementById("section1").addEventListener("click", function() {
-    window.location.href = "detailsLivreStruct.html";
+    window.location.href = "creationLivreStruct.html";
 });
 document.getElementById("section3").addEventListener("click", function() {
-    window.location.href = "detailsLivreStruct3.html";
+    window.location.href = "creationLivreStruct3.html";
 });
 document.getElementById("block1").addEventListener("click", function() {
-    window.location.href = "detailsLivreStruct.html";
+    window.location.href = "creationLivreStruct.html";
 });
 document.getElementById("block3").addEventListener("click", function() {
-    window.location.href = "detailsLivreStruct3.html";
+    window.location.href = "creationLivreStruct3.html";
 });
 
     </script>
